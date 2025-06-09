@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor";
+package fileprocessor;
+
+
+
+service FileService {
+  rpc ProcessFiles (FileList) returns (stream FileStats);
+}
+
+message FileList {
+  repeated string paths = 1;
+}
+
+message FileStats {
+  string path = 1;
+  int32 lines = 2;
+  int32 words = 3;
+  string error = 4; // если ошибка при обработке
+}
