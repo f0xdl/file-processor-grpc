@@ -46,7 +46,15 @@ func main() {
 	for {
 		fileStats, e := result.Recv()
 		if e != nil {
-			log.Println("Error recv:", fileStats.Error)
+			if e.Error() == "EOF" {
+				log.Println("All files processed")
+				break
+			}
+			log.Println("Error recv:", e)
+			break
+		}
+		if fileStats == nil {
+			log.Println("Received nil file stats, possibly due to an error or end of stream")
 			continue
 		}
 		if fileStats.Error != "" {

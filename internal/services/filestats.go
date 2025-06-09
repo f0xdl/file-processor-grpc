@@ -22,12 +22,11 @@ func NewFileStatsService(storage IStorage) *FileStatsService {
 }
 
 func (fp *FileStatsService) GetFileStats(path string) (stats domain.FileStats, err error) {
-	stats.Path = path
-	if stats.Path == "" {
+	if path == "" {
 		return stats, errors.New("file path cannot be empty")
 	}
 
-	data, err := fp.storage.GetBytesFromFile(stats.Path)
+	data, err := fp.storage.GetBytesFromFile(path)
 	if err != nil {
 		return
 	} else if len(data) == 0 {

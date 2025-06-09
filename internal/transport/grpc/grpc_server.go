@@ -1,9 +1,6 @@
 package grpc
 
 import (
-	"errors"
-	"log"
-
 	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
 	"github.com/f0xdl/file-processor-grpc/internal/services"
 	"google.golang.org/grpc"
@@ -19,10 +16,18 @@ func NewRpcServer(service *services.FileStatsService) *server {
 }
 
 func (s *server) ProcessFiles(in *pb.FileList, out grpc.ServerStreamingServer[pb.FileStats]) error {
-	for path := range in.Paths {
-		log.Println(path)
-	}
-	out.Send(&pb.FileStats{Path: in.Paths[0], Error: "test"})
+	for _, path := range in.Paths {
+		stats, err := s.service.GetFileStats(path)
+		pbStats := pb.FileStats{
+			Path:  path,
+			Lines: int32(stats.Lines),
+			Words: int32(stats.Words),
+		}
+		if err != nil {
+			pbStats.Error = err.Error()
+		}
+		out.Send(&pbStats)
 
-	return errors.New("method ProcessFiles not implemented")
+	}
+	return nil
 }
