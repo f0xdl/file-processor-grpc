@@ -1,101 +1,68 @@
-# 📦 FileProcessor gRPC
-## 🎯 Цель проекта
 
-Создать gRPC-сервис, который:
-
-* Принимает список файловых путей (или имена виртуальных файлов).
-* Параллельно обрабатывает файлы (подсчёт строк и слов).
-* Стримит результаты обратно клиенту.
-* Использует middleware (interceptor) и поддержку `context cancellation`.
+![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![License](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)
+![gRPC]()
+![gin]()
 
 
-## 📐 Архитектура
+# 📦FileProcessor gRPC `🛠 Practice`
+## 📚Table of contents
+🚧🚧🚧
 
-### gRPC API (protobuf)
+## 🎯 Goals
+The project is focused on practicing with gRPC in Golang:
+### 📋 TODO
+- [ ] Client:
+  - [ ] Accepts a list of file paths via HTTP ФЗШ
+  - [ ] Send paths to gRPC server
+  - [ ] Cancel by timeout `context.WithTimeout`
+  - [ ] Middlewares:
+    - [ ] Logging method, duration and errors
+    - [ ] Panic processing
+    - [ ] Rate limiting
+- [ ] Server:
+  - [ ] Add `.proto` in gRPC-service
+    - ProcessFiles(stream FilePath) returns (stream FileResult)
+    - Using Server-side streaming
+  - [ ] Accepts a list of file paths via gRPC
+  - [ ] Processes files in parallel
+    - [ ] Counting lines
+    - [ ] Counting words
+    - [ ] Limit: no more than 5 files can be processed simultaneously
+    - [ ] Fan in processing files
+      - [ ] Fan-out: dispatch processing to goroutines
+      - [ ] Fan-in: collect results and send to client
+  - [ ] Stream results back to the client
+  - [ ] Support context cancellation on request
+  - [ ] Stores processing history
+- [ ] Lifecycle organization:
+  -  [ ] Graceful shutdown
+  -  [ ] Healthcheck
+- [ ] Testing
+  - [ ] Unit testing:
+    - [ ] Counting lines
+    - [ ] Counting words 
+    - [ ] Processing raise a panic 
+  - [ ] Integrated testing:
+    - [ ] Client: send path -> Server: calculate -> Client: return result
+- [ ] Deployment
+  - [ ] Create dockerfiles
+  - [ ] Create docker-compose
 
-```proto
-syntax = "proto3";
+- ⏳ Backlog
+  - Authorization via gRPC metadata
+  - Supports file uploads
 
-package fileprocessor;
+## 🛠️ Features
+- 🔗 Accepts a list of file paths (or virtual file names)
+- ⚙️ Processes files in parallel (counting lines and words)
+- 🔄 Streams results back to the client
+- 🧩 Using middleware (interceptor, rate-limit, etc.)
+- ⏹️ Support context cancellation
+- 🛡️ Authorization via gRPC metadata
+- 🕓 Stores processing history
+- 📤 Supports file uploads
 
-service FileService {
-  rpc ProcessFiles (FileList) returns (stream FileStats);
-}
-
-message FileList {
-  repeated string paths = 1;
-}
-
-message FileStats {
-  string path = 1;
-  int32 lines = 2;
-  int32 words = 3;
-  string error = 4; // если ошибка при обработке
-}
-```
-
-
-
-## ✅ Функциональность
-
-### Клиент
-
-* Отправляет список путей (`paths`) на сервер.
-* Может отменить выполнение через `context.WithTimeout`.
-
-### Сервер
-
-* Обрабатывает каждый файл в отдельной горутине (**fan-out**).
-* Подсчитывает количество строк и слов (можно использовать `bufio.Scanner`).
-* Отправляет результат по мере готовности в виде стрима.
-* Завершает выполнение по `ctx.Done()` (таймаут или отмена).
-
-
-
-## 🔄 Конкурентность и ограничение ресурсов
-
-* **Fan-out/fan-in**:
-
-  * fan-out: воркеры получают задания.
-  * fan-in: собираем и отправляем клиенту результаты.
-* Ограничение: одновременно обрабатывается не более **5 файлов**.
-
-  * Можно использовать `semaphore` или буферизированный `channel`.
-
-
-
-## 🔒 Middleware
-
-### Interceptors
-* Логируют метод, длительность, ошибки.
-* Обрабатывают panic.
-
-
-
-## 🧪 Тестирование
-
-* Юнит-тесты:
-
-  * Подсчёт строк/слов.
-  * Ошибка чтения файла.
-  * Завершение по таймауту (`context.Cancel()`).
-* Интеграционный тест:
-
-  * Клиент ↔ Сервер ↔ Результат.
-
-
-
-## ⚙️ Используемые библиотеки
-
-* [`google.golang.org/grpc`](https://pkg.go.dev/google.golang.org/grpc)
-* [`google.golang.org/protobuf`](https://pkg.go.dev/google.golang.org/protobuf)
-* `context`, `os`, `sync`, `bufio`, `time`
-* (опционально) [`golang.org/x/sync/semaphore`](https://pkg.go.dev/golang.org/x/sync/semaphore)
-
-
-
-## 🚀 Возможные улучшения
-
-* Авторизация с помощью gRPC metadata.
-* Хранение истории обработки.
-* Поддержка загрузки файлов (а не только по имени).
+## 📐 Architecture
+🚧🚧🚧
