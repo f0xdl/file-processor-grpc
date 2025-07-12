@@ -14,7 +14,7 @@
 The project is focused on practicing with gRPC in Golang:
 ### 📋 TODO
 - [ ] Client:
-  - [ ] Accepts a list of file paths via HTTP ФЗШ
+  - [ ] Accepts a list of file paths via HTTP API
   - [ ] Send paths to gRPC server
   - [ ] Cancel by timeout `context.WithTimeout`
   - [ ] Middlewares:
@@ -37,7 +37,7 @@ The project is focused on practicing with gRPC in Golang:
   - [ ] Support context cancellation on request
   - [ ] Stores processing history
 - [ ] Lifecycle organization:
-  -  [ ] Graceful shutdown
+  -  [x] Graceful shutdown
   -  [ ] Healthcheck
 - [ ] Testing
   - [ ] Unit testing:
@@ -47,7 +47,7 @@ The project is focused on practicing with gRPC in Golang:
   - [ ] Integrated testing:
     - [ ] Client: send path -> Server: calculate -> Client: return result
 - [ ] Deployment
-  - [ ] Create dockerfiles
+  - [x] Create dockerfiles
   - [ ] Create docker-compose
 
 - ⏳ Backlog
