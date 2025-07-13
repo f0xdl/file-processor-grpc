@@ -1,6 +1,7 @@
-package filereader
+package OLD
 
 import (
+	"github.com/f0xdl/file-processor-grpc/internal/domain"
 	"os"
 	"path/filepath"
 )
@@ -15,7 +16,7 @@ func NewIoFileReader(basePath string) *IoFileReader {
 
 func (fr *IoFileReader) GetBytesFromFile(path string) ([]byte, error) {
 	if path == "" {
-		return nil, WrongFileNameError(path)
+		return nil, domain.WrongFileNameError(path)
 	}
 	absPath, err := filepath.Abs(filepath.Join(fr.basePath, path))
 	if err != nil {

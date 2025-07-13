@@ -1,4 +1,4 @@
-package server
+package fileservice
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type App struct {
 	s    *rpc.Server
 }
 
-func New() *App {
+func NewApp() *App {
 	return &App{
 		cfg:  Config{},
 		done: make(chan struct{}),
@@ -48,7 +48,7 @@ func (a *App) Build() (err error) {
 
 func (a *App) Run(ctx context.Context) (err error) {
 	//TODO implement me
-	//log.Printf("server listening at %v", listener.Addr())
+	//log.Printf("file-service listening at %v", listener.Addr())
 	//if err := s.Serve(listener); err != nil {
 	//	log.Fatalf("failed to serve: %v", err)
 	//}

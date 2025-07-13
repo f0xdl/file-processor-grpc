@@ -6,30 +6,22 @@ import (
 	"time"
 )
 
-type Service interface {
+type Wrapped interface {
 	Build() error
 	Run(ctx context.Context) error
 	Stop()
 	Done() <-chan struct{}
 }
 
-type Manager struct {
-	svc Service
-}
-
-func NewManager(app Service) *Manager {
-	return &Manager{svc: app}
-}
-
-func (m *Manager) Start(ctx context.Context, shutdownTimeout time.Duration) (err error) {
-	defer WrapRecover(&err, "Manager.Run")
+func SafeStart(ctx context.Context, m Wrapped, shutdownTimeout time.Duration) (err error) {
+	defer WrapRecover(&err, "Wrapper.Run")
 	log.Info().Msg("setup application")
-	err = m.svc.Build()
+	err = m.Build()
 	if err != nil {
 		return err
 	}
 	log.Info().Msg("run application")
-	err = m.svc.Run(ctx)
+	err = m.Run(ctx)
 	if err != nil {
 		return err
 	}
@@ -39,12 +31,12 @@ func (m *Manager) Start(ctx context.Context, shutdownTimeout time.Duration) (err
 	defer cancel()
 
 	go func() {
-		defer WrapRecover(nil, "Service.Shutdown")
-		m.svc.Stop()
+		defer WrapRecover(nil, "ServiceWrapper.Shutdown")
+		m.Stop()
 	}()
 
 	select {
-	case <-m.svc.Done():
+	case <-m.Done():
 		log.Info().Msg("graceful shutdown finished")
 	case <-canceledCtx.Done():
 		log.Error().Msg("graceful shutdown canceled")

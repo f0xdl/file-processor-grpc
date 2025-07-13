@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/f0xdl/file-processor-grpc/internal/client"
 	"github.com/f0xdl/file-processor-grpc/internal/service"
-	"github.com/f0xdl/file-processor-grpc/internal/service/client"
 	"log"
 	"os/signal"
 	"time"
@@ -17,9 +17,8 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-
-	c := client.New()
-	if err := service.NewManager(c).Start(ctx, time.Second*15); err != nil {
+	app := client.NewApp()
+	if err := service.SafeStart(ctx, app, time.Second*15); err != nil {
 		log.Fatalf("Error start service: %s", err)
 	}
 }

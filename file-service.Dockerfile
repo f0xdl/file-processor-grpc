@@ -7,8 +7,8 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN go build -o ./bin/server ./cmd/server/main.go
+RUN go build -o ./bin/file-service ./cmd/file-service/main.go
 
 FROM scratch
-COPY --from=builder /src/bin/server /server
-ENTRYPOINT ["/server"]
+COPY --from=builder /src/bin/file-service /file-service
+ENTRYPOINT ["/file-service"]

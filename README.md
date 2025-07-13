@@ -14,12 +14,12 @@
 The project is focused on practicing with gRPC in Golang:
 ### 📋 TODO
 - [ ] Client:
-  - [ ] Accepts a list of file paths via HTTP API
+  - [x] Accepts a list of file paths via HTTP API
   - [ ] Send paths to gRPC server
   - [ ] Cancel by timeout `context.WithTimeout`
   - [ ] Middlewares:
     - [ ] Logging method, duration and errors
-    - [ ] Panic processing
+    - [x] Panic processing
     - [ ] Rate limiting
 - [ ] Server:
   - [ ] Add `.proto` in gRPC-service

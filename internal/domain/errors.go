@@ -1,16 +1,16 @@
-package filereader
+package domain
 
 import "fmt"
 
-type wrongFileNameError struct {
+type WrongFileNameErr struct {
 	path string
 }
 
-func WrongFileNameError(path string) *wrongFileNameError {
-	return &wrongFileNameError{path: path}
+func WrongFileNameError(path string) *WrongFileNameErr {
+	return &WrongFileNameErr{path: path}
 }
 
-func (e *wrongFileNameError) Error() string {
+func (e *WrongFileNameErr) Error() string {
 	return fmt.Sprintf("wrong file name in path: '%s'", e.path)
 }
 

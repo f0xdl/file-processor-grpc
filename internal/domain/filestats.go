@@ -1,6 +1,21 @@
 package domain
 
+import "encoding/json"
+
 type FileStats struct {
-	Lines int
-	Words int
+	Name  string `json:"name"`
+	Lines int    `json:"lines"`
+	Words int    `json:"words"`
+	Err   error  `json:"err"`
+}
+
+func (fs FileStats) MarshalJSON() ([]byte, error) {
+	type FStats FileStats
+	return json.Marshal(&struct {
+		*FStats
+		Err string `json:"err,omitempty"`
+	}{
+		Err:    fs.Err.Error(),
+		FStats: (*FStats)(&fs),
+	})
 }
