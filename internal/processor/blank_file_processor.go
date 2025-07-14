@@ -9,7 +9,7 @@ func (b Blank) ProcessFiles(filenames []string) ([]domain.FileStats, error) {
 	filestats := make([]domain.FileStats, len(filenames))
 	for i, filename := range filenames {
 		filestats[i] = domain.FileStats{
-			Name:  filename,
+			Path:  filename,
 			Lines: i,
 			Words: i,
 		}

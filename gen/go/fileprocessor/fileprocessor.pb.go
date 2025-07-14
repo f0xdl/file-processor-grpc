@@ -70,7 +70,7 @@ type FileStats struct {
 	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 	Lines         int32                  `protobuf:"varint,2,opt,name=lines,proto3" json:"lines,omitempty"`
 	Words         int32                  `protobuf:"varint,3,opt,name=words,proto3" json:"words,omitempty"`
-	Error         string                 `protobuf:"bytes,4,opt,name=error,proto3" json:"error,omitempty"` // если ошибка при обработке
+	Err           string                 `protobuf:"bytes,4,opt,name=err,proto3" json:"err,omitempty"` // if error during processing
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -126,9 +126,113 @@ func (x *FileStats) GetWords() int32 {
 	return 0
 }
 
-func (x *FileStats) GetError() string {
+func (x *FileStats) GetErr() string {
 	if x != nil {
-		return x.Error
+		return x.Err
+	}
+	return ""
+}
+
+type UploadFileReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Filename      string                 `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
+	Content       []byte                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadFileReq) Reset() {
+	*x = UploadFileReq{}
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadFileReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadFileReq) ProtoMessage() {}
+
+func (x *UploadFileReq) ProtoReflect() protoreflect.Message {
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadFileReq.ProtoReflect.Descriptor instead.
+func (*UploadFileReq) Descriptor() ([]byte, []int) {
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UploadFileReq) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *UploadFileReq) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+type UploadFileResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadFileResp) Reset() {
+	*x = UploadFileResp{}
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadFileResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadFileResp) ProtoMessage() {}
+
+func (x *UploadFileResp) ProtoReflect() protoreflect.Message {
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadFileResp.ProtoReflect.Descriptor instead.
+func (*UploadFileResp) Descriptor() ([]byte, []int) {
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UploadFileResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UploadFileResp) GetMessage() string {
+	if x != nil {
+		return x.Message
 	}
 	return ""
 }
@@ -139,14 +243,22 @@ const file_fileprocessor_fileprocessor_proto_rawDesc = "" +
 	"\n" +
 	"!fileprocessor/fileprocessor.proto\x12\rfileprocessor\" \n" +
 	"\bFileList\x12\x14\n" +
-	"\x05paths\x18\x01 \x03(\tR\x05paths\"a\n" +
+	"\x05paths\x18\x01 \x03(\tR\x05paths\"]\n" +
 	"\tFileStats\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x14\n" +
 	"\x05lines\x18\x02 \x01(\x05R\x05lines\x12\x14\n" +
-	"\x05words\x18\x03 \x01(\x05R\x05words\x12\x14\n" +
-	"\x05error\x18\x04 \x01(\tR\x05error2R\n" +
-	"\vFileService\x12C\n" +
-	"\fProcessFiles\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01B;Z9github.com/f0xdl/file-processor-grpc/gen/go/fileprocessorb\x06proto3"
+	"\x05words\x18\x03 \x01(\x05R\x05words\x12\x10\n" +
+	"\x03err\x18\x04 \x01(\tR\x03err\"E\n" +
+	"\rUploadFileReq\x12\x1a\n" +
+	"\bfilename\x18\x01 \x01(\tR\bfilename\x12\x18\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent\"D\n" +
+	"\x0eUploadFileResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\x9f\x01\n" +
+	"\rFileProcessor\x12C\n" +
+	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12I\n" +
+	"\n" +
+	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x1d.fileprocessor.UploadFileRespB;Z9github.com/f0xdl/file-processor-grpc/gen/go/fileprocessorb\x06proto3"
 
 var (
 	file_fileprocessor_fileprocessor_proto_rawDescOnce sync.Once
@@ -160,16 +272,20 @@ func file_fileprocessor_fileprocessor_proto_rawDescGZIP() []byte {
 	return file_fileprocessor_fileprocessor_proto_rawDescData
 }
 
-var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_fileprocessor_fileprocessor_proto_goTypes = []any{
-	(*FileList)(nil),  // 0: fileprocessor.FileList
-	(*FileStats)(nil), // 1: fileprocessor.FileStats
+	(*FileList)(nil),       // 0: fileprocessor.FileList
+	(*FileStats)(nil),      // 1: fileprocessor.FileStats
+	(*UploadFileReq)(nil),  // 2: fileprocessor.UploadFileReq
+	(*UploadFileResp)(nil), // 3: fileprocessor.UploadFileResp
 }
 var file_fileprocessor_fileprocessor_proto_depIdxs = []int32{
-	0, // 0: fileprocessor.FileService.ProcessFiles:input_type -> fileprocessor.FileList
-	1, // 1: fileprocessor.FileService.ProcessFiles:output_type -> fileprocessor.FileStats
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: fileprocessor.FileProcessor.GetFileStats:input_type -> fileprocessor.FileList
+	2, // 1: fileprocessor.FileProcessor.UploadFile:input_type -> fileprocessor.UploadFileReq
+	1, // 2: fileprocessor.FileProcessor.GetFileStats:output_type -> fileprocessor.FileStats
+	3, // 3: fileprocessor.FileProcessor.UploadFile:output_type -> fileprocessor.UploadFileResp
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -186,7 +302,7 @@ func file_fileprocessor_fileprocessor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fileprocessor_fileprocessor_proto_rawDesc), len(file_fileprocessor_fileprocessor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

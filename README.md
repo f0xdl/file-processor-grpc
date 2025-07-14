@@ -22,9 +22,12 @@ The project is focused on practicing with gRPC in Golang:
     - [x] Panic processing
     - [ ] Rate limiting
 - [ ] Server:
-  - [ ] Add `.proto` in gRPC-service
-    - ProcessFiles(stream FilePath) returns (stream FileResult)
+  - [ ] Middlewares
+    - [x] Panic processing
+  - [x] Add `.proto` in gRPC-service
+    - ProcessFiles(FileList) returns (stream FileResult)
     - Using Server-side streaming
+  - [x] build proto files
   - [ ] Accepts a list of file paths via gRPC
   - [ ] Processes files in parallel
     - [ ] Counting lines
@@ -66,3 +69,14 @@ The project is focused on practicing with gRPC in Golang:
 
 ## 📐 Architecture
 🚧🚧🚧
+
+# DEBUG
+## Makefile
+Для использования команд make на Windows необходимо установить пакет:
+```shell
+choco install make
+```
+
+## Environment Variables
+[Client](./doc/client-env.md#config),
+[File Server](./doc/fileservice-env.md#config)

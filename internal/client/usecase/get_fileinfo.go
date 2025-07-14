@@ -14,7 +14,7 @@ func NewGetFileInfoUC() *GetFileInfoUC {
 }
 
 func (uc *GetFileInfoUC) Execute(ctx context.Context, name string) (domain.FileStats, error) {
-	return domain.FileStats{Name: name, Err: errors.New("not implemented")}, nil
+	return domain.FileStats{Path: name, Err: errors.New("not implemented")}, nil
 }
 
 func (uc *GetFileInfoUC) ManyExecute(ctx context.Context, names []string) ([]domain.FileStats, error) {

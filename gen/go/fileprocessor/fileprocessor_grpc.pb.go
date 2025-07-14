@@ -19,27 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	FileService_ProcessFiles_FullMethodName = "/fileprocessor.FileService/ProcessFiles"
+	FileProcessor_GetFileStats_FullMethodName = "/fileprocessor.FileProcessor/GetFileStats"
+	FileProcessor_UploadFile_FullMethodName   = "/fileprocessor.FileProcessor/UploadFile"
 )
 
-// FileServiceClient is the client API for FileService service.
+// FileProcessorClient is the client API for FileProcessor service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type FileServiceClient interface {
-	ProcessFiles(ctx context.Context, in *FileList, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileStats], error)
+type FileProcessorClient interface {
+	GetFileStats(ctx context.Context, in *FileList, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileStats], error)
+	UploadFile(ctx context.Context, in *UploadFileReq, opts ...grpc.CallOption) (*UploadFileResp, error)
 }
 
-type fileServiceClient struct {
+type fileProcessorClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewFileServiceClient(cc grpc.ClientConnInterface) FileServiceClient {
-	return &fileServiceClient{cc}
+func NewFileProcessorClient(cc grpc.ClientConnInterface) FileProcessorClient {
+	return &fileProcessorClient{cc}
 }
 
-func (c *fileServiceClient) ProcessFiles(ctx context.Context, in *FileList, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileStats], error) {
+func (c *fileProcessorClient) GetFileStats(ctx context.Context, in *FileList, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileStats], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &FileService_ServiceDesc.Streams[0], FileService_ProcessFiles_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &FileProcessor_ServiceDesc.Streams[0], FileProcessor_GetFileStats_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,69 +56,106 @@ func (c *fileServiceClient) ProcessFiles(ctx context.Context, in *FileList, opts
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type FileService_ProcessFilesClient = grpc.ServerStreamingClient[FileStats]
+type FileProcessor_GetFileStatsClient = grpc.ServerStreamingClient[FileStats]
 
-// FileServiceServer is the server API for FileService service.
-// All implementations must embed UnimplementedFileServiceServer
-// for forward compatibility.
-type FileServiceServer interface {
-	ProcessFiles(*FileList, grpc.ServerStreamingServer[FileStats]) error
-	mustEmbedUnimplementedFileServiceServer()
+func (c *fileProcessorClient) UploadFile(ctx context.Context, in *UploadFileReq, opts ...grpc.CallOption) (*UploadFileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadFileResp)
+	err := c.cc.Invoke(ctx, FileProcessor_UploadFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedFileServiceServer must be embedded to have
+// FileProcessorServer is the server API for FileProcessor service.
+// All implementations must embed UnimplementedFileProcessorServer
+// for forward compatibility.
+type FileProcessorServer interface {
+	GetFileStats(*FileList, grpc.ServerStreamingServer[FileStats]) error
+	UploadFile(context.Context, *UploadFileReq) (*UploadFileResp, error)
+	mustEmbedUnimplementedFileProcessorServer()
+}
+
+// UnimplementedFileProcessorServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedFileServiceServer struct{}
+type UnimplementedFileProcessorServer struct{}
 
-func (UnimplementedFileServiceServer) ProcessFiles(*FileList, grpc.ServerStreamingServer[FileStats]) error {
-	return status.Errorf(codes.Unimplemented, "method ProcessFiles not implemented")
+func (UnimplementedFileProcessorServer) GetFileStats(*FileList, grpc.ServerStreamingServer[FileStats]) error {
+	return status.Errorf(codes.Unimplemented, "method GetFileStats not implemented")
 }
-func (UnimplementedFileServiceServer) mustEmbedUnimplementedFileServiceServer() {}
-func (UnimplementedFileServiceServer) testEmbeddedByValue()                     {}
+func (UnimplementedFileProcessorServer) UploadFile(context.Context, *UploadFileReq) (*UploadFileResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedFileProcessorServer) mustEmbedUnimplementedFileProcessorServer() {}
+func (UnimplementedFileProcessorServer) testEmbeddedByValue()                       {}
 
-// UnsafeFileServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to FileServiceServer will
+// UnsafeFileProcessorServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FileProcessorServer will
 // result in compilation errors.
-type UnsafeFileServiceServer interface {
-	mustEmbedUnimplementedFileServiceServer()
+type UnsafeFileProcessorServer interface {
+	mustEmbedUnimplementedFileProcessorServer()
 }
 
-func RegisterFileServiceServer(s grpc.ServiceRegistrar, srv FileServiceServer) {
-	// If the following call pancis, it indicates UnimplementedFileServiceServer was
+func RegisterFileProcessorServer(s grpc.ServiceRegistrar, srv FileProcessorServer) {
+	// If the following call pancis, it indicates UnimplementedFileProcessorServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&FileService_ServiceDesc, srv)
+	s.RegisterService(&FileProcessor_ServiceDesc, srv)
 }
 
-func _FileService_ProcessFiles_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _FileProcessor_GetFileStats_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(FileList)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(FileServiceServer).ProcessFiles(m, &grpc.GenericServerStream[FileList, FileStats]{ServerStream: stream})
+	return srv.(FileProcessorServer).GetFileStats(m, &grpc.GenericServerStream[FileList, FileStats]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type FileService_ProcessFilesServer = grpc.ServerStreamingServer[FileStats]
+type FileProcessor_GetFileStatsServer = grpc.ServerStreamingServer[FileStats]
 
-// FileService_ServiceDesc is the grpc.ServiceDesc for FileService service.
+func _FileProcessor_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadFileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileProcessorServer).UploadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileProcessor_UploadFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileProcessorServer).UploadFile(ctx, req.(*UploadFileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// FileProcessor_ServiceDesc is the grpc.ServiceDesc for FileProcessor service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var FileService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "fileprocessor.FileService",
-	HandlerType: (*FileServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+var FileProcessor_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "fileprocessor.FileProcessor",
+	HandlerType: (*FileProcessorServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UploadFile",
+			Handler:    _FileProcessor_UploadFile_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "ProcessFiles",
-			Handler:       _FileService_ProcessFiles_Handler,
+			StreamName:    "GetFileStats",
+			Handler:       _FileProcessor_GetFileStats_Handler,
 			ServerStreams: true,
 		},
 	},

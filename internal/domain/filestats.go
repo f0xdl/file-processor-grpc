@@ -3,7 +3,7 @@ package domain
 import "encoding/json"
 
 type FileStats struct {
-	Name  string `json:"name"`
+	Path  string `json:"path"`
 	Lines int    `json:"lines"`
 	Words int    `json:"words"`
 	Err   error  `json:"err"`

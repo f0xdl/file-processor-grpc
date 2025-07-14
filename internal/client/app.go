@@ -8,13 +8,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-//go:generate envdoc --output ./../../../doc/client-env-doc.md
+//go:generate envdoc --output ./../../doc/client-env.md
 type Config struct {
-	// Storage directory for processing files
-	StorageDir string `env:"STORAGE_DIR,required"`
-	// Address to gRPC file service
+	// Address to gRPC file service, [host]:port
 	GrpcServerAddr string `env:"GRPC_SERVER_ADDRESS,required"`
-	HttpAddr       string `env:"HTTP_ADDRESS,required"`
+	// HTTP gateway, [host]:port
+	HttpAddr string `env:"HTTP_ADDRESS,required"`
 }
 
 type App struct {
