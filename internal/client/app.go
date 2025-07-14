@@ -49,7 +49,7 @@ func (a *App) Build() (err error) {
 	return nil
 }
 
-func (a *App) Run(ctx context.Context) (err error) {
+func (a *App) Run(_ context.Context) (err error) {
 	log.Info().Msg("Launch client file-service, on: " + a.httpServer.GetAddr())
 	a.httpServer.Start()
 

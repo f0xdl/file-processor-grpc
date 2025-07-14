@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/caarlos0/env/v11"
 	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
+	"github.com/f0xdl/file-processor-grpc/internal/filereader"
 	usecase "github.com/f0xdl/file-processor-grpc/internal/fileservice/usecase"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/rs/zerolog/log"
@@ -50,15 +51,15 @@ func (a *App) Build() (err error) {
 	}
 	a.gServer = grpc.NewServer(opts...)
 
-	//TODO storage := filereader.NewIoFileReader(os.Getenv("STORAGE_PATH"))
-	fs := usecase.NewFileServiceServer()
+	store := filereader.NewIoFileReader(a.cfg.StorageDir)
+	fs := usecase.NewFileServiceServer(store)
 
 	log.Info().Msg("Register .proto services")
 	pb.RegisterFileProcessorServer(a.gServer, fs)
 	return nil
 }
 
-func (a *App) Run(ctx context.Context) (err error) {
+func (a *App) Run(_ context.Context) (err error) {
 	log.Info().Msg("Run gRPC via tcp listener")
 	listener, err := net.Listen("tcp", a.cfg.GrpcAddr)
 	if err != nil {
