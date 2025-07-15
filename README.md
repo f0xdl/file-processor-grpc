@@ -21,21 +21,20 @@ The project is focused on practicing with gRPC in Golang:
     - [ ] Logging method, duration and errors
     - [x] Panic processing
     - [ ] Rate limiting
-- [ ] Server:
-  - [ ] Middlewares
-    - [x] Panic processing
+- [x] Server:
+  - [x] Panic middleware
   - [x] Add `.proto` in gRPC-service
     - ProcessFiles(FileList) returns (stream FileResult)
     - Using Server-side streaming
   - [x] build proto files
   - [x] Accepts a list of file paths via gRPC
   - [x] Processes files in parallel
-    - [x] Counting lines
-    - [x] Counting words
-    - [x] Limit: no more than 5 files can be processed simultaneously
-    - [x] Fan in processing files
-      - [x] Fan-out: dispatch processing to goroutines
-      - [x] Fan-in: collect results and send to client
+  - [x] Counting lines
+  - [x] Counting words
+  - [x] Limit: no more than 5 files can be processed simultaneously
+  - [x] Fan in processing files
+    - [x] Fan-out: dispatch processing to goroutines
+    - [x] Fan-in: collect results and send to client
   - [x] Stream results back to the client
   - [x] Support context cancellation on request
   - [x] Stores processing history
@@ -52,6 +51,7 @@ The project is focused on practicing with gRPC in Golang:
 - [ ] Deployment
   - [x] Create dockerfiles
   - [ ] Create docker-compose
+  - [ ] Write ReadMe
 
 - ⏳ Backlog
   - Authorization via gRPC metadata

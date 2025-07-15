@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/rs/zerolog/log"
+	"math/rand"
 	"time"
 )
 
@@ -14,7 +16,7 @@ type Wrapped interface {
 }
 
 func SafeStart(ctx context.Context, m Wrapped, shutdownTimeout time.Duration) (err error) {
-	defer WrapRecover(&err, "Wrapper.Run")
+	defer wrapRecover(&err, "Wrapper.Run")
 	log.Info().Msg("setup application")
 	err = m.Build()
 	if err != nil {
@@ -31,7 +33,7 @@ func SafeStart(ctx context.Context, m Wrapped, shutdownTimeout time.Duration) (e
 	defer cancel()
 
 	go func() {
-		defer WrapRecover(nil, "ServiceWrapper.Shutdown")
+		defer wrapRecover(nil, "ServiceWrapper.Shutdown")
 		m.Stop()
 	}()
 
@@ -42,4 +44,19 @@ func SafeStart(ctx context.Context, m Wrapped, shutdownTimeout time.Duration) (e
 		log.Error().Msg("graceful shutdown canceled")
 	}
 	return nil
+}
+
+func wrapRecover(errPtr *error, context string) {
+	if r := recover(); r != nil {
+		id := rand.Uint64()
+		log.Error().
+			Uint64("panic_id", id).
+			Str("context", context).
+			Any("err", r).
+			Stack().
+			Msg("panic recovered")
+		if errPtr != nil {
+			*errPtr = fmt.Errorf("panic recovered in %s. For details search panic_id=%v", context, id)
+		}
+	}
 }
