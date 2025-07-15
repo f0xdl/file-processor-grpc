@@ -1,4 +1,4 @@
-package filereader
+package file
 
 import (
 	"bufio"
@@ -7,17 +7,24 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
-type IoFileReader struct {
+const StatsTimeout = time.Minute
+
+type IoFileProcessor struct {
 	basePath string
+	files    chan string
 }
 
-func NewIoFileReader(basePath string) *IoFileReader {
-	return &IoFileReader{basePath: basePath}
+func NewIoFileReader(basePath string) *IoFileProcessor {
+	return &IoFileProcessor{
+		basePath: basePath,
+		files:    make(chan string, 5),
+	}
 }
 
-func (i IoFileReader) FileExist(_ context.Context, path string) bool {
+func (i *IoFileProcessor) FileExist(_ context.Context, path string) bool {
 	path = filepath.Join(i.basePath, path)
 	_, err := os.Stat(path)
 	if err != nil {
@@ -26,8 +33,12 @@ func (i IoFileReader) FileExist(_ context.Context, path string) bool {
 	return true
 }
 
-func (i IoFileReader) GetStats(ctx context.Context, path string) (s domain.FileStats) {
+func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s domain.FileStats) {
 	s.Path = path
+	ctxTimeout, cancel := context.WithTimeout(ctx, StatsTimeout)
+	defer cancel()
+
+	// open file
 	file, err := os.Open(filepath.Join(i.basePath, path))
 	if err != nil {
 		s.Err = err
@@ -38,8 +49,8 @@ func (i IoFileReader) GetStats(ctx context.Context, path string) (s domain.FileS
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		select {
-		case <-ctx.Done():
-			s.Err = ctx.Err()
+		case <-ctxTimeout.Done():
+			s.Err = ctxTimeout.Err()
 			return
 		default:
 		}

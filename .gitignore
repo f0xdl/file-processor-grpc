@@ -26,7 +26,9 @@ go.work.sum
 .env
 
 # Editor/IDE
- .idea
+.idea/
+assets/kreya
 
  # Debug space
 /cmd/dev
+

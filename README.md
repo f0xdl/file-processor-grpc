@@ -28,16 +28,16 @@ The project is focused on practicing with gRPC in Golang:
     - ProcessFiles(FileList) returns (stream FileResult)
     - Using Server-side streaming
   - [x] build proto files
-  - [ ] Accepts a list of file paths via gRPC
-  - [ ] Processes files in parallel
-    - [ ] Counting lines
-    - [ ] Counting words
-    - [ ] Limit: no more than 5 files can be processed simultaneously
-    - [ ] Fan in processing files
-      - [ ] Fan-out: dispatch processing to goroutines
-      - [ ] Fan-in: collect results and send to client
-  - [ ] Stream results back to the client
-  - [ ] Support context cancellation on request
+  - [x] Accepts a list of file paths via gRPC
+  - [x] Processes files in parallel
+    - [x] Counting lines
+    - [x] Counting words
+    - [x] Limit: no more than 5 files can be processed simultaneously
+    - [x] Fan in processing files
+      - [x] Fan-out: dispatch processing to goroutines
+      - [x] Fan-in: collect results and send to client
+  - [x] Stream results back to the client
+  - [x] Support context cancellation on request
   - [ ] Stores processing history
 - [ ] Lifecycle organization:
   -  [x] Graceful shutdown
