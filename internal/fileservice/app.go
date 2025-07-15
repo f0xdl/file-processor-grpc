@@ -5,7 +5,8 @@ import (
 	"github.com/caarlos0/env/v11"
 	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
 	"github.com/f0xdl/file-processor-grpc/internal/fileservice/infra/file"
-	usecase "github.com/f0xdl/file-processor-grpc/internal/fileservice/usecase"
+	"github.com/f0xdl/file-processor-grpc/internal/fileservice/infra/historian"
+	"github.com/f0xdl/file-processor-grpc/internal/fileservice/usecase"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -52,7 +53,8 @@ func (a *App) Build() (err error) {
 	a.gServer = grpc.NewServer(opts...)
 
 	store := file.NewIoFileReader(a.cfg.StorageDir)
-	fs := usecase.NewFileServiceServer(store)
+	cache := historian.NewMemoryCache()
+	fs := usecase.NewFileServiceServer(store, cache)
 
 	log.Info().Msg("Register .proto services")
 	pb.RegisterFileProcessorServer(a.gServer, fs)

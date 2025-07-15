@@ -41,3 +41,7 @@ func (fs FileStats) Error() string {
 		return "unknown error"
 	}
 }
+
+func FileStatsError(path string, err error) FileStats {
+	return FileStats{Path: path, Err: err}
+}

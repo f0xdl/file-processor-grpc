@@ -33,8 +33,8 @@ func (i *IoFileProcessor) FileExist(_ context.Context, path string) bool {
 	return true
 }
 
-func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s domain.FileStats) {
-	s.Path = path
+func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.FileStats) {
+	s = &domain.FileStats{Path: path}
 	ctxTimeout, cancel := context.WithTimeout(ctx, StatsTimeout)
 	defer cancel()
 

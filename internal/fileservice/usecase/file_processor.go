@@ -14,16 +14,24 @@ const MaxJobs = 5
 
 type IFileProcessor interface {
 	FileExist(ctx context.Context, path string) bool
-	GetStats(ctx context.Context, path string) domain.FileStats
+	GetStats(ctx context.Context, path string) *domain.FileStats
+}
+type ICache interface {
+	Get(ctx context.Context, path string) (*domain.FileStats, error)
+	Set(ctx context.Context, stats *domain.FileStats) error
 }
 
 type FileProcessorUC struct {
 	pb.UnimplementedFileProcessorServer
 	store IFileProcessor
+	cache ICache
 }
 
-func NewFileServiceServer(store IFileProcessor) *FileProcessorUC {
-	return &FileProcessorUC{store: store}
+func NewFileServiceServer(store IFileProcessor, cache ICache) *FileProcessorUC {
+	return &FileProcessorUC{
+		store: store,
+		cache: cache,
+	}
 }
 
 func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreamingServer[pb.FileStats]) error {
@@ -35,7 +43,7 @@ func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreaming
 		return nil
 	}
 
-	//prepare fan-in/out
+	//prepare
 	wg := sync.WaitGroup{}
 	sem := make(chan struct{}, MaxJobs)
 	results := make(chan domain.FileStats, fileCount)
@@ -43,6 +51,10 @@ func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreaming
 	// fan-out
 	ctx := g.Context()
 	for id, path := range list.Paths {
+		if len(path) == 0 {
+			results <- domain.FileStatsError(path, domain.ErrWrongFileName)
+		}
+
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
@@ -51,15 +63,32 @@ func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreaming
 			defer func() {
 				<-sem
 			}()
+			log.Debug().Int("job", id).Str("path", path).Msg("file processing start")
 
 			if ctx.Err() != nil {
-				results <- domain.FileStats{Path: path, Err: ctx.Err()}
+				results <- domain.FileStatsError(path, ctx.Err())
 				return
 			}
 
-			log.Info().Int("job", id).Str("path", path).Msg("file processing start")
-			results <- p.store.GetStats(ctx, path)
-			log.Info().Int("job", id).Str("path", path).Msg("file processing done")
+			stats, err := p.cache.Get(ctx, path)
+			if err != nil && !errors.Is(err, domain.ErrPathNotFound) {
+				log.Warn().Timestamp().Err(err).Str("path", path).Msg("error getting file stats from cache")
+			}
+
+			if stats == nil {
+				log.Debug().Int("job", id).Str("path", path).
+					Msg("file missing in cache, calculating stats")
+				stats = p.store.GetStats(ctx, path)
+				if stats.Err == nil { // save to cache
+					err = p.cache.Set(ctx, stats)
+					if err != nil {
+						log.Warn().Timestamp().Err(err).Str("path", path).Msg("error set file stats to cache")
+					}
+				}
+			}
+
+			log.Debug().Int("job", id).Str("path", path).Msg("file processing done")
+			results <- *stats
 		}(path)
 	}
 

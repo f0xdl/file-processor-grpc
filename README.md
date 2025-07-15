@@ -38,7 +38,7 @@ The project is focused on practicing with gRPC in Golang:
       - [x] Fan-in: collect results and send to client
   - [x] Stream results back to the client
   - [x] Support context cancellation on request
-  - [ ] Stores processing history
+  - [x] Stores processing history
 - [ ] Lifecycle organization:
   -  [x] Graceful shutdown
   -  [ ] Healthcheck
