@@ -1,9 +1,10 @@
 
-![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![License](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)
-![gRPC]()
-![gin]()
+![License](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=flat-square)
+![Go](https://img.shields.io/badge/go-1.24-%2300ADD8.svg?style=flat-square&logo=go&logoColor=white)
+![gRPC](https://img.shields.io/badge/gRPC-1.73-blue?style=flat-square&logo=go&logoColor=white)
+![gin](https://img.shields.io/badge/Gin-1.10-00C397?style=flat-square&logo=go&logoColor=white)
+![zerolog](https://img.shields.io/badge/zerolog-f33?style=flat-square)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white)
 
 
 # 📦FileProcessor gRPC `🛠 Practice`
@@ -15,8 +16,8 @@ The project is focused on practicing with gRPC in Golang:
 ### 📋 TODO
 - [ ] Client:
   - [x] Accepts a list of file paths via HTTP API
-  - [ ] Send paths to gRPC server
-  - [ ] Cancel by timeout `context.WithTimeout`
+  - [x] Send paths to gRPC server
+  - [x] Cancel by timeout `context.WithTimeout`
   - [ ] Middlewares:
     - [ ] Logging method, duration and errors
     - [x] Panic processing
