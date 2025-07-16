@@ -17,11 +17,15 @@ type FileStats struct {
 
 func (fs FileStats) MarshalJSON() ([]byte, error) {
 	type FStats FileStats
+	var errStr string
+	if fs.Err != nil {
+		errStr = fs.Err.Error()
+	}
 	return json.Marshal(&struct {
 		*FStats
 		Err string `json:"err,omitempty"`
 	}{
-		Err:    fs.Err.Error(),
+		Err:    errStr,
 		FStats: (*FStats)(&fs),
 	})
 }

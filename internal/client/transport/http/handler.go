@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-const RequestInfoTimeout = time.Second * 5
-const UploadFileTimeout = time.Second * 15
+const RequestInfoTimeout = time.Second * 25
+const UploadFileTimeout = time.Minute
 
 func isJson(c *gin.Context) bool {
 	ct := c.GetHeader("Content-Type")
@@ -43,7 +43,7 @@ func (s *Server) fileinfoHandler(c *gin.Context) {
 	results, err := s.uc.GetFileInfo(ctx, data.Filenames)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to process files")
-		c.String(http.StatusInternalServerError, "Failed to process files")
+		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 

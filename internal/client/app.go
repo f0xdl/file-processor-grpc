@@ -2,10 +2,14 @@ package client
 
 import (
 	"context"
+	"errors"
 	"github.com/caarlos0/env/v11"
+	gclient "github.com/f0xdl/file-processor-grpc/internal/client/infra/grpc_client"
 	"github.com/f0xdl/file-processor-grpc/internal/client/transport/http"
 	"github.com/f0xdl/file-processor-grpc/internal/client/usecase"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 //go:generate envdoc --output ./../../doc/client-env.md
@@ -20,6 +24,7 @@ type App struct {
 	cfg        *Config
 	done       chan struct{}
 	httpServer *http.Server
+	grpcStub   *grpc.ClientConn
 }
 
 func NewApp() *App {
@@ -39,68 +44,46 @@ func (a *App) Build() (err error) {
 		return err
 	}
 
-	log.Info().Msg("Build file processor")
-	fileInfo := usecase.NewGetFileInfoUC()
-	uploadFile := usecase.NewUploadFileUC()
-	fileService := usecase.NewFileService(fileInfo, uploadFile)
+	log.Info().Msg("Build gRPC client")
+	a.grpcStub, err = grpc.NewClient(a.cfg.GrpcServerAddr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		return err
+	}
 
-	log.Info().Msg("Build client file-service")
+	h := gclient.NewHandler(a.grpcStub)
+
+	log.Info().Msg("Build http client file-service")
+	fileService := usecase.NewFileService(h)
 	a.httpServer = http.NewHttpServer(a.cfg.HttpAddr, fileService)
 	return nil
 }
 
 func (a *App) Run(_ context.Context) (err error) {
-	log.Info().Msg("Launch client file-service, on: " + a.httpServer.GetAddr())
+	log.Info().Str("addr", a.grpcStub.Target()).Msg("gRPC server listening")
+	if a.grpcStub == nil {
+		return errors.New("grpc client nil")
+	}
+
+	log.Info().Str("addr", a.httpServer.GetAddr()).Msg("Launch client file-service")
+	if a.httpServer == nil {
+		return errors.New("http server nil")
+	}
 	a.httpServer.Start()
 
-	//log.Println("Connect to gRPC file-service")
-	//conn, err := grpc.NewClient(os.Getenv("GRPC_SERVER_ADDRESS"), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	//if err != nil {
-	//	log.Printf("Failed to connect to gRPC file-service: %v", err)
-	//	return
-	//}
-	//defer conn.Close()
-	//
-	//log.Println("Build FileServiceClient")
-	//c := pb.NewFileServiceClient(conn)
-	//log.Println("Request Files Stats")
-	//result, err := c.ProcessFiles(ctx, &pb.FileList{Paths: files})
-	//if err != nil {
-	//	log.Printf("Processing error: %s", err)
-	//}
-	//
-	//for {
-	//	fileStats, e := result.Recv()
-	//	if e != nil {
-	//		if e.Error() == "EOF" {
-	//			log.Println("All files processed")
-	//			break
-	//		}
-	//		log.Println("Error recv:", e)
-	//		break
-	//	}
-	//	if fileStats == nil {
-	//		log.Println("Received nil file stats, possibly due to an error or end of stream")
-	//		continue
-	//	}
-	//	if fileStats.Error != "" {
-	//		log.Println("Error processing file:", fileStats.Path, "Error:", fileStats.Error)
-	//		continue
-	//	}
-	//	log.Println("File:", fileStats.Path, "Lines:", fileStats.Lines, "Words:", fileStats.Words)
-	//}
-
-	//TODO implement me
-	log.Warn().Msg("Running client")
 	return nil
 }
 
 func (a *App) Stop() {
-	log.Warn().Msg("Stopping client")
+	log.Info().Msg("Stopping client")
 	if err := a.httpServer.Stop(); err != nil {
 		log.Warn().Err(err).Msg("Failed to stop client file-service")
 	} else {
 		log.Info().Msg("Http file-service stopped")
+	}
+	if err := a.grpcStub.Close(); err != nil {
+		log.Warn().Err(err).Msg("Failed to stop grpc client")
 	}
 	close(a.done)
 }
