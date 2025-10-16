@@ -1,0 +1,44 @@
+{
+    "go.lintTool": "golangci-lint-v2",
+   "go.lintFlags": [
+        "--path-mode=abs",
+        "--fast-only"
+    ],
+    "go.formatTool": "custom",
+    "go.alternateTools": {
+        "customFormatter": "golangci-lint-v2"
+    },
+    "go.formatFlags": [
+        "fmt",
+        "--stdin"
+    ],
+    "folder-path-color.folders": [
+        // CODE
+        { "path": "cmd", "color": "white", "tooltip": "Application entry points" },
+        { "path": "internal", "color": "white", "tooltip": "Internal logic, not for external use" },
+        { "path": "pkg", "color": "white", "tooltip": "Reusable packages" },
+        // TESTING
+        { "path": "test", "color": "green", "tooltip": "Integration and system tests" },
+        { "path": "mock", "color": "green", "tooltip": "Mocks and stubs for tests" },
+        { "path": "fixtures", "color": "green", "tooltip": "Test data and fixtures" },
+        // DOCUMENTATION
+        { "path": "examples", "color": "blue", "tooltip": "Usage examples" },
+        { "path": "api", "color": "blue", "tooltip": "API definitions" },
+        { "path": "docs", "color": "blue", "tooltip": "Project documentation" },
+        { "path": "assets", "color": "blue", "tooltip": "Static resources" },
+        { "path": "vendor", "color": "blue", "tooltip": "Vendored dependencies" },
+        // DEPLOYMENT
+        { "path": "scripts", "color": "custom1", "tooltip": "Build, migration and deploy scripts" },
+        { "path": "build", "color": "custom1", "tooltip": "Build artifacts and files" },
+        { "path": "deploy", "color": "custom1", "tooltip": "Deployment configurations and templates" },
+        { "path": "ci", "color": "custom1", "tooltip": "CI/CD scripts and configurations" },
+        { "path": "tools", "color": "custom1", "tooltip": "Development tools and utilities" },
+        // DATA
+        { "path": "data", "color": "red", "tooltip": "Application working data" },
+        { "path": "logs", "color": "red", "tooltip": "Application logs" },
+        { "path": "infra", "color": "red", "tooltip": "Infrastructure files and scripts" },
+    ],
+    "workbench.colorCustomizations": {
+        "folderPathColor.custom1": "#dfc38e99",
+    },
+}
