@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor";
+option go_package = "github.com/f0xdl/file-processor-grpc/api/fileprocessor";
 package fileprocessor;
 
 

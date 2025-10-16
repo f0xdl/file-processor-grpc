@@ -2,14 +2,15 @@ package grpc_client
 
 import (
 	"context"
-	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
+	"io"
+	"time"
+
+	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
-	"time"
 )
 
 const GetTimeout = time.Minute

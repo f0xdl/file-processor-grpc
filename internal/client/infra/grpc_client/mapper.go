@@ -2,7 +2,8 @@ package grpc_client
 
 import (
 	"errors"
-	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
+
+	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
 )
 

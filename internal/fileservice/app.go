@@ -2,15 +2,16 @@ package fileservice
 
 import (
 	"context"
+	"net"
+
 	"github.com/caarlos0/env/v11"
-	pb "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor"
+	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
 	"github.com/f0xdl/file-processor-grpc/internal/fileservice/infra/file"
 	"github.com/f0xdl/file-processor-grpc/internal/fileservice/infra/historian"
 	"github.com/f0xdl/file-processor-grpc/internal/fileservice/usecase"
-	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"net"
 )
 
 //go:generate envdoc --output ./../../doc/fileservice-env.md
