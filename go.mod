@@ -1,6 +1,6 @@
 module github.com/f0xdl/file-processor-grpc
 
-go 1.24.4
+go 1.25.1
 
 require (
 	github.com/caarlos0/env/v11 v11.3.1
@@ -17,7 +17,7 @@ require (
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/g4s8/envdoc v1.6.0 // indirect
+	github.com/g4s8/envdoc v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

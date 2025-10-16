@@ -1,11 +1,14 @@
 
 ![License](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=flat-square)
-![Go](https://img.shields.io/badge/go-1.24-%2300ADD8.svg?style=flat-square&logo=go&logoColor=white)
+![Go](https://img.shields.io/badge/go-1.25-%2300ADD8.svg?style=flat-square&logo=go&logoColor=white)
 ![gRPC](https://img.shields.io/badge/gRPC-1.73-blue?style=flat-square&logo=go&logoColor=white)
 ![gin](https://img.shields.io/badge/Gin-1.10-00C397?style=flat-square&logo=go&logoColor=white)
 ![zerolog](https://img.shields.io/badge/zerolog-f33?style=flat-square)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white)
 
+>[!tldr] Abstract
+> The project was written for educational purposes.
+> Windows platform, vscode editor. Support for other operating systems is not guaranteed.
 
 # 📦FileProcessor gRPC `🛠 Practice`
 ## 📚Table of contents
@@ -77,7 +80,6 @@ The project is focused on practicing with gRPC in Golang:
 ```sh
 task install
 ```
-~~Для использования команд make на Windows необходимо установить пакет:~~
 
 
 ## Environment Variables
