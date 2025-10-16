@@ -20,6 +20,7 @@ The project is focused on practicing with gRPC in Golang:
 - [ ] Client:
   - [x] Accepts a list of file paths via HTTP API
   - [x] Send paths to gRPC server
+  - [ ] Supports file uploads to gRPC
   - [x] Cancel by timeout `context.WithTimeout`
   - [ ] Middlewares:
     - [ ] Logging method, duration and errors
@@ -42,6 +43,7 @@ The project is focused on practicing with gRPC in Golang:
   - [x] Stream results back to the client
   - [x] Support context cancellation on request
   - [x] Stores processing history
+  - [ ] Supports file uploads to store
 - [ ] Lifecycle organization:
   -  [x] Graceful shutdown
   -  [ ] Healthcheck
@@ -56,10 +58,10 @@ The project is focused on practicing with gRPC in Golang:
   - [x] Create dockerfiles
   - [ ] Create docker-compose
   - [ ] Write ReadMe
+  - [x] Add Taskfile.yml in project
 
 - ⏳ Backlog
   - Authorization via gRPC metadata
-  - Supports file uploads
 
 ## 🛠️ Features
 - 🔗 Accepts a list of file paths (or virtual file names)
@@ -85,3 +87,7 @@ task install
 ## Environment Variables
 [Client](./doc/client-env.md#config),
 [File Server](./doc/fileservice-env.md#config)
+
+
+# TODO
+- https://protobuf.dev/installation/
