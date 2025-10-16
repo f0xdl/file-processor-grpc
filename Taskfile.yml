@@ -1,0 +1,85 @@
+# https://taskfile.dev
+
+version: '3'
+vars:
+  BASE_VERSION: 0.1.0
+  COMMIT: 00000000
+
+tasks:
+  install:
+    desc: "Install all tools"
+    cmds:
+      - echo "TODO"
+      
+  #FORMAT 
+  lint:
+    cmds:
+      - golangci-lint run ./... --config=./.golangci.yml
+    desc: "Lint the code"
+  clean:
+    cmds:
+      - rm -rf build/bin/
+      - rm -rf api/generated
+    desc: "Clean the build artifacts"
+
+  #BUILDS
+  build:client:
+    desc: "Build client"
+    cmds:
+      - go build -o build/bin/client.exe ./cmd/client
+  build:file-service:
+    desc: "Build file-service"
+    cmds:
+      - go build -o build/bin/file-service.exe ./cmd/file-service
+  build:all:
+    desc: "Build all apps"
+    deps:
+      - build:file-service
+      - build:client
+
+  #LAUNCH
+  launch:client:
+    dotenv:
+      - deploy/env/.env.dev
+    cmds: 
+      - go run ./cmd/client/main.go
+  launch:file-service:
+    dotenv:
+      - deploy/env/.env.dev
+    cmds: 
+      - go run ./cmd/file-service/main.go
+  launch:all:
+    desk: "Build and start file-service & web-client"
+    deps:
+      - launch:client
+      - launch:file-service
+    cmds:
+      - echo "Both done"
+
+  #TESTS
+  test:
+    cmds:
+      - go test ./...
+    desc: "Run tests"
+
+  # CODE GENERATORS 
+  gen:env:
+    desc: "Generate environment doc from structures"
+    cmds:
+      - go generate ./internal/client/app.go
+      - go generate ./internal/fileservice/app.go
+  gen:proto:
+    desc: "Generate go files from  protobuf scheme"
+    vars:
+      PATH_OUT: api/generated
+      PATH_IN: api/proto
+    cmds: 
+      - mkdir {{.PATH_OUT}}
+      - >
+        protoc
+        --proto_path={{.PATH_IN}} 
+        --go_out={{.PATH_OUT}} --go_opt=paths=source_relative 
+        --go-grpc_out={{.PATH_OUT}} --go-grpc_opt=paths=source_relative 
+        {{.PATH_IN}}/fileprocessor/*.proto
+
+

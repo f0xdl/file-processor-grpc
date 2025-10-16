@@ -72,11 +72,13 @@ The project is focused on practicing with gRPC in Golang:
 🚧🚧🚧
 
 # DEBUG
-## Makefile
-Для использования команд make на Windows необходимо установить пакет:
-```shell
-choco install make
+🚧🚧🚧
+## Taskfile
+```sh
+task install
 ```
+~~Для использования команд make на Windows необходимо установить пакет:~~
+
 
 ## Environment Variables
 [Client](./doc/client-env.md#config),

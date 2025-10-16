@@ -1,0 +1,22 @@
+version: "2"
+linters:
+  enable:
+    - govet
+    - errcheck
+  include_paths:
+    - "cmd"
+    - "internal"
+    - "pkg"
+run:
+  timeout: 2m 
+  tests: true
+issues:
+  exclude-use-default: false
+  max-same-issues: 3
+output:
+  format: colored-line-number
+severity:
+  error: always
+linter-settings:
+  lll:
+    line-leight: 120
