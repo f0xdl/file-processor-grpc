@@ -1,0 +1,26 @@
+volumes:
+  storage:
+services:
+  file-service:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: build/file-service.Dockerfile
+    volumes:
+      - storage:/app/data/storage
+    environment:
+      - STORAGE_DIR=/app/data/storage
+      - GRPC_ADDRESS=:50051
+
+  frontend:
+    depends_on:
+      - file-service
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: build/client.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - GRPC_SERVER_ADDRESS=file-service:50051
+      - HTTP_ADDRESS=:8080
