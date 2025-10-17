@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+
 	"github.com/caarlos0/env/v11"
 	gclient "github.com/f0xdl/file-processor-grpc/internal/client/infra/grpc_client"
 	"github.com/f0xdl/file-processor-grpc/internal/client/transport/http"
@@ -18,6 +19,8 @@ type Config struct {
 	GrpcServerAddr string `env:"GRPC_SERVER_ADDRESS,required"`
 	// HTTP gateway, [host]:port
 	HttpAddr string `env:"HTTP_ADDRESS,required"`
+	// Debug mode, 1/0
+	Debug int `env:"DEBUG"`
 }
 
 type App struct {
@@ -42,6 +45,9 @@ func (a *App) Build() (err error) {
 	log.Info().Msg("Read client configuration")
 	if err = env.Parse(a.cfg); err != nil {
 		return err
+	}
+	if a.cfg.Debug==1 {
+		log.Warn().Msg("Debug mode enabled!")
 	}
 
 	log.Info().Msg("Build gRPC client")

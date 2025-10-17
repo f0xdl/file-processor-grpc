@@ -19,24 +19,22 @@ tasks:
   clean:
     cmds:
       - rm -rf build/bin/
-      - rm -rf api/generated
+      - rm -rf api/generated/
     desc: "Clean the build artifacts"
 
-  #BUILDS
-  build:client:
-    desc: "Build client"
+  #DEPLOY
+  debug:docker:
+    desk: "Run services with delve debugger"
+    dir: deploy
     cmds:
-      - go build -o build/bin/client.exe ./cmd/client
-  build:file-service:
-    desc: "Build file-service"
+      - docker-compose -p file-processor-grpc-debug -f docker-compose.debug.yml up --build
+  deploy:docker:
+    desk: "Build and deploy services to docker"
+    dir: deploy
     cmds:
-      - go build -o build/bin/file-service.exe ./cmd/file-service
-  build:all:
-    desc: "Build all apps"
-    deps:
-      - build:file-service
-      - build:client
-
+      - docker-compose -p file-processor-grpc-production down
+      - docker-compose -p file-processor-grpc-production up --build -d 
+  
   #LAUNCH
   launch:client:
     dotenv:

@@ -20,6 +20,8 @@ type Config struct {
 	StorageDir string `env:"STORAGE_DIR,required"`
 	// Address to gRPC file service, [host]:port
 	GrpcAddr string `env:"GRPC_ADDRESS,required"`
+	// Debug mode, 1/0
+	Debug int `env:"DEBUG"`
 }
 
 type App struct {
@@ -44,6 +46,10 @@ func (a *App) Build() (err error) {
 	log.Info().Msg("Building client")
 	if err = env.Parse(a.cfg); err != nil {
 		return err
+	}
+	
+	if a.cfg.Debug==1 {
+		log.Warn().Msg("Debug mode enabled!")
 	}
 
 	log.Info().Msg("Build gRPC server")
