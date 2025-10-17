@@ -37,15 +37,17 @@ tasks:
   
   #LAUNCH
   launch:client:
-    dotenv:
-      - deploy/env/.env.dev
     cmds: 
       - go run ./cmd/client/main.go
+    env:
+      GRPC_SERVER_ADDRESS: "localhost:50051"
+      HTTP_ADDRESS: ":8080"
   launch:file-service:
-    dotenv:
-      - deploy/env/.env.dev
     cmds: 
       - go run ./cmd/file-service/main.go
+    env:
+      GRPC_ADDRESS: ":50051"
+      STORAGE_DIR: "./data/storage"
   launch:all:
     desk: "Build and start file-service & web-client"
     deps:
