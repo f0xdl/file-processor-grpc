@@ -14,14 +14,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-//go:generate envdoc --output ./../../doc/fileservice-env.md
+//go:generate envdoc --output ./../../docs/fileservice-env.md
 type Config struct {
 	// Storage directory for processing files
 	StorageDir string `env:"STORAGE_DIR,required"`
 	// Address to gRPC file service, [host]:port
 	GrpcAddr string `env:"GRPC_ADDRESS,required"`
-	// Debug mode, 1/0
-	Debug int `env:"DEBUG"`
 }
 
 type App struct {
@@ -38,6 +36,10 @@ func NewApp() *App {
 	}
 }
 
+func (a *App) Label() string {
+	return "fileservice.App"
+}
+
 func (a *App) Done() <-chan struct{} {
 	return a.done
 }
@@ -46,10 +48,6 @@ func (a *App) Build() (err error) {
 	log.Info().Msg("Building client")
 	if err = env.Parse(a.cfg); err != nil {
 		return err
-	}
-	
-	if a.cfg.Debug==1 {
-		log.Warn().Msg("Debug mode enabled!")
 	}
 
 	log.Info().Msg("Build gRPC server")

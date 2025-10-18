@@ -13,14 +13,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-//go:generate envdoc --output ./../../doc/client-env.md
+//go:generate envdoc --output ./../../docs/client-env.md
 type Config struct {
 	// Address to gRPC file service, [host]:port
 	GrpcServerAddr string `env:"GRPC_SERVER_ADDRESS,required"`
 	// HTTP gateway, [host]:port
 	HttpAddr string `env:"HTTP_ADDRESS,required"`
-	// Debug mode, 1/0
-	Debug int `env:"DEBUG"`
 }
 
 type App struct {
@@ -37,20 +35,20 @@ func NewApp() *App {
 	}
 }
 
+func (a *App) Label() string {
+	return "client.App"
+}
+
 func (a *App) Done() <-chan struct{} {
 	return a.done
 }
 
 func (a *App) Build() (err error) {
-	log.Info().Msg("Read client configuration")
+	log.Info().Msg("read client configuration")
 	if err = env.Parse(a.cfg); err != nil {
 		return err
 	}
-	if a.cfg.Debug==1 {
-		log.Warn().Msg("Debug mode enabled!")
-	}
-
-	log.Info().Msg("Build gRPC client")
+	log.Info().Msg("build gRPC client")
 	a.grpcStub, err = grpc.NewClient(a.cfg.GrpcServerAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -60,7 +58,7 @@ func (a *App) Build() (err error) {
 
 	h := gclient.NewHandler(a.grpcStub)
 
-	log.Info().Msg("Build http client file-service")
+	log.Info().Msg("build http client file-service")
 	fileService := usecase.NewFileService(h)
 	a.httpServer = http.NewHttpServer(a.cfg.HttpAddr, fileService)
 	return nil
@@ -72,7 +70,7 @@ func (a *App) Run(_ context.Context) (err error) {
 		return errors.New("grpc client nil")
 	}
 
-	log.Info().Str("addr", a.httpServer.GetAddr()).Msg("Launch client file-service")
+	log.Info().Str("addr", a.httpServer.GetAddr()).Msg("launch client file-service")
 	if a.httpServer == nil {
 		return errors.New("http server nil")
 	}

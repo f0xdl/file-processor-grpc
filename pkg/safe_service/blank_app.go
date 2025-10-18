@@ -1,4 +1,4 @@
-package service
+package safe_service
 
 import (
 	"context"

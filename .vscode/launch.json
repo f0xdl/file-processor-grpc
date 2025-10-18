@@ -15,6 +15,7 @@
             //
             "program": "${workspaceFolder}/cmd/client",
             "envFile": "${workspaceFolder}/deploy/.env.dev",
+            "console": "integratedTerminal"
         },
         {
             "name": "local: service",
