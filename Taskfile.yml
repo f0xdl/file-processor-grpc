@@ -11,6 +11,23 @@ tasks:
     cmds:
       - echo "TODO"
       
+  #LAUNCH
+  launch:client:
+    cmds: 
+      - go run ./cmd/client/main.go
+    dotenv: ["./deploy/.env.dev"]
+  launch:service:
+    cmds: 
+      - go run ./cmd/file-service/main.go
+    dotenv: ["./deploy/.env.dev"]
+  launch:all:
+    desk: "Build and start file-service & web-client"
+    deps:
+      - launch:client
+      - launch:file-service
+    cmds:
+      - echo "Both done"
+
   #FORMAT 
   lint:
     cmds:
@@ -35,27 +52,6 @@ tasks:
       - docker-compose -p file-processor-grpc-production down
       - docker-compose -p file-processor-grpc-production up --build -d 
   
-  #LAUNCH
-  launch:client:
-    cmds: 
-      - go run ./cmd/client/main.go
-    env:
-      GRPC_SERVER_ADDRESS: "localhost:50051"
-      HTTP_ADDRESS: ":8080"
-  launch:file-service:
-    cmds: 
-      - go run ./cmd/file-service/main.go
-    env:
-      GRPC_ADDRESS: ":50051"
-      STORAGE_DIR: "./data/storage"
-  launch:all:
-    desk: "Build and start file-service & web-client"
-    deps:
-      - launch:client
-      - launch:file-service
-    cmds:
-      - echo "Both done"
-
   #TESTS
   test:
     cmds:
