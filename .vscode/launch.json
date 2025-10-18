@@ -9,9 +9,13 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
+            //  error here
+            //  delve cannot work with cmd subfolders, only root
+            //  https://github.com/golang/go/issues/60451
+            //
             "program": "${workspaceFolder}/cmd/client",
             "envFile": "${workspaceFolder}/deploy/.env.dev",
- },
+        },
         {
             "name": "local: service",
             "type": "go",
@@ -20,7 +24,6 @@
             "program": "${workspaceFolder}/cmd/file-service",
             "envFile": "${workspaceFolder}/deploy/.env.dev",
         },
-
         {
             "name": "docker: file-server",
             "type": "go",

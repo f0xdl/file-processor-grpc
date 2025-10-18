@@ -3,13 +3,14 @@ package http
 import (
 	"context"
 	"errors"
+	"io"
+	"net/http"
+
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"io"
-	"net/http"
 )
 
 type IFileService interface {
@@ -25,10 +26,10 @@ type Server struct {
 
 func NewHttpServer(host string, uc IFileService) *Server {
 	s := &Server{errCh: make(chan error), uc: uc}
-
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(RecoveryWithZerolog(&log.Logger))
-	r.Use(gin.Logger())
+	// r.Use(gin.Logger())
 
 	r.GET("/status", healthHandler)
 	r.GET("/file/info", s.fileinfoHandler)
