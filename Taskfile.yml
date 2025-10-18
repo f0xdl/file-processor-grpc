@@ -21,10 +21,10 @@ tasks:
       - go run ./cmd/file-service/main.go
     dotenv: ["./deploy/.env.dev"]
   launch:all:
-    desk: "Build and start file-service & web-client"
+    desc: "Build and start file-service & web-client"
     deps:
       - launch:client
-      - launch:file-service
+      - launch:service
     cmds:
       - echo "Both done"
 
