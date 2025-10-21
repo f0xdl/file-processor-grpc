@@ -41,12 +41,12 @@ tasks:
 
   #DEPLOY
   debug:docker:
-    desk: "Run services with delve debugger"
+    desc: "Run services with delve debugger"
     dir: deploy
     cmds:
       - docker-compose -p file-processor-grpc-debug -f docker-compose.debug.yml up --build
   deploy:docker:
-    desk: "Build and deploy services to docker"
+    desc: "Build and deploy services to docker"
     dir: deploy
     cmds:
       - docker-compose -p file-processor-grpc-production down
@@ -69,8 +69,8 @@ tasks:
     vars:
       PATH_OUT: api/generated
       PATH_IN: api/proto
-    cmds: 
-      - mkdir {{.PATH_OUT}}
+    cmds:
+      - mkdir -p {{.PATH_OUT}}
       - >
         protoc
         --proto_path={{.PATH_IN}} 
