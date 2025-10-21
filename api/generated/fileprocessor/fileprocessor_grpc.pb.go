@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	FileProcessor_GetFileStats_FullMethodName = "/fileprocessor.FileProcessor/GetFileStats"
 	FileProcessor_UploadFile_FullMethodName   = "/fileprocessor.FileProcessor/UploadFile"
+	FileProcessor_IsFileExist_FullMethodName  = "/fileprocessor.FileProcessor/IsFileExist"
 )
 
 // FileProcessorClient is the client API for FileProcessor service.
@@ -29,6 +30,7 @@ const (
 type FileProcessorClient interface {
 	GetFileStats(ctx context.Context, in *FileList, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileStats], error)
 	UploadFile(ctx context.Context, in *UploadFileReq, opts ...grpc.CallOption) (*UploadFileResp, error)
+	IsFileExist(ctx context.Context, in *CheckFileExistsReq, opts ...grpc.CallOption) (*BoolValue, error)
 }
 
 type fileProcessorClient struct {
@@ -68,12 +70,23 @@ func (c *fileProcessorClient) UploadFile(ctx context.Context, in *UploadFileReq,
 	return out, nil
 }
 
+func (c *fileProcessorClient) IsFileExist(ctx context.Context, in *CheckFileExistsReq, opts ...grpc.CallOption) (*BoolValue, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BoolValue)
+	err := c.cc.Invoke(ctx, FileProcessor_IsFileExist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileProcessorServer is the server API for FileProcessor service.
 // All implementations must embed UnimplementedFileProcessorServer
 // for forward compatibility.
 type FileProcessorServer interface {
 	GetFileStats(*FileList, grpc.ServerStreamingServer[FileStats]) error
 	UploadFile(context.Context, *UploadFileReq) (*UploadFileResp, error)
+	IsFileExist(context.Context, *CheckFileExistsReq) (*BoolValue, error)
 	mustEmbedUnimplementedFileProcessorServer()
 }
 
@@ -89,6 +102,9 @@ func (UnimplementedFileProcessorServer) GetFileStats(*FileList, grpc.ServerStrea
 }
 func (UnimplementedFileProcessorServer) UploadFile(context.Context, *UploadFileReq) (*UploadFileResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedFileProcessorServer) IsFileExist(context.Context, *CheckFileExistsReq) (*BoolValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsFileExist not implemented")
 }
 func (UnimplementedFileProcessorServer) mustEmbedUnimplementedFileProcessorServer() {}
 func (UnimplementedFileProcessorServer) testEmbeddedByValue()                       {}
@@ -140,6 +156,24 @@ func _FileProcessor_UploadFile_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileProcessor_IsFileExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckFileExistsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileProcessorServer).IsFileExist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FileProcessor_IsFileExist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileProcessorServer).IsFileExist(ctx, req.(*CheckFileExistsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileProcessor_ServiceDesc is the grpc.ServiceDesc for FileProcessor service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -150,6 +184,10 @@ var FileProcessor_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UploadFile",
 			Handler:    _FileProcessor_UploadFile_Handler,
+		},
+		{
+			MethodName: "IsFileExist",
+			Handler:    _FileProcessor_IsFileExist_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

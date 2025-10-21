@@ -4,10 +4,11 @@ option go_package = "github.com/f0xdl/file-processor-grpc/api/fileprocessor";
 package fileprocessor;
 
 
-
 service FileProcessor {
   rpc GetFileStats (FileList) returns (stream FileStats);
   rpc UploadFile(UploadFileReq) returns (UploadFileResp);
+  rpc IsFileExist (CheckFileExistsReq) returns (BoolValue);
+  
 }
 
 message FileList {
@@ -29,4 +30,12 @@ message UploadFileReq {
 message UploadFileResp {
   bool success = 1;
   string message = 2;
+}
+
+message CheckFileExistsReq{
+  string filename = 1;
+}
+
+message BoolValue {
+  bool value = 1;
 }

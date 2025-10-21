@@ -237,6 +237,94 @@ func (x *UploadFileResp) GetMessage() string {
 	return ""
 }
 
+type CheckFileExistsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Filename      string                 `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckFileExistsReq) Reset() {
+	*x = CheckFileExistsReq{}
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckFileExistsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckFileExistsReq) ProtoMessage() {}
+
+func (x *CheckFileExistsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckFileExistsReq.ProtoReflect.Descriptor instead.
+func (*CheckFileExistsReq) Descriptor() ([]byte, []int) {
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CheckFileExistsReq) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+type BoolValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         bool                   `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BoolValue) Reset() {
+	*x = BoolValue{}
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BoolValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BoolValue) ProtoMessage() {}
+
+func (x *BoolValue) ProtoReflect() protoreflect.Message {
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BoolValue.ProtoReflect.Descriptor instead.
+func (*BoolValue) Descriptor() ([]byte, []int) {
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *BoolValue) GetValue() bool {
+	if x != nil {
+		return x.Value
+	}
+	return false
+}
+
 var File_fileprocessor_fileprocessor_proto protoreflect.FileDescriptor
 
 const file_fileprocessor_fileprocessor_proto_rawDesc = "" +
@@ -254,11 +342,16 @@ const file_fileprocessor_fileprocessor_proto_rawDesc = "" +
 	"\acontent\x18\x02 \x01(\fR\acontent\"D\n" +
 	"\x0eUploadFileResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\x9f\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"0\n" +
+	"\x12CheckFileExistsReq\x12\x1a\n" +
+	"\bfilename\x18\x01 \x01(\tR\bfilename\"!\n" +
+	"\tBoolValue\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\bR\x05value2\xeb\x01\n" +
 	"\rFileProcessor\x12C\n" +
 	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12I\n" +
 	"\n" +
-	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x1d.fileprocessor.UploadFileRespB8Z6github.com/f0xdl/file-processor-grpc/api/fileprocessorb\x06proto3"
+	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x1d.fileprocessor.UploadFileResp\x12J\n" +
+	"\vIsFileExist\x12!.fileprocessor.CheckFileExistsReq\x1a\x18.fileprocessor.BoolValueB8Z6github.com/f0xdl/file-processor-grpc/api/fileprocessorb\x06proto3"
 
 var (
 	file_fileprocessor_fileprocessor_proto_rawDescOnce sync.Once
@@ -272,20 +365,24 @@ func file_fileprocessor_fileprocessor_proto_rawDescGZIP() []byte {
 	return file_fileprocessor_fileprocessor_proto_rawDescData
 }
 
-var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_fileprocessor_fileprocessor_proto_goTypes = []any{
-	(*FileList)(nil),       // 0: fileprocessor.FileList
-	(*FileStats)(nil),      // 1: fileprocessor.FileStats
-	(*UploadFileReq)(nil),  // 2: fileprocessor.UploadFileReq
-	(*UploadFileResp)(nil), // 3: fileprocessor.UploadFileResp
+	(*FileList)(nil),           // 0: fileprocessor.FileList
+	(*FileStats)(nil),          // 1: fileprocessor.FileStats
+	(*UploadFileReq)(nil),      // 2: fileprocessor.UploadFileReq
+	(*UploadFileResp)(nil),     // 3: fileprocessor.UploadFileResp
+	(*CheckFileExistsReq)(nil), // 4: fileprocessor.CheckFileExistsReq
+	(*BoolValue)(nil),          // 5: fileprocessor.BoolValue
 }
 var file_fileprocessor_fileprocessor_proto_depIdxs = []int32{
 	0, // 0: fileprocessor.FileProcessor.GetFileStats:input_type -> fileprocessor.FileList
 	2, // 1: fileprocessor.FileProcessor.UploadFile:input_type -> fileprocessor.UploadFileReq
-	1, // 2: fileprocessor.FileProcessor.GetFileStats:output_type -> fileprocessor.FileStats
-	3, // 3: fileprocessor.FileProcessor.UploadFile:output_type -> fileprocessor.UploadFileResp
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: fileprocessor.FileProcessor.IsFileExist:input_type -> fileprocessor.CheckFileExistsReq
+	1, // 3: fileprocessor.FileProcessor.GetFileStats:output_type -> fileprocessor.FileStats
+	3, // 4: fileprocessor.FileProcessor.UploadFile:output_type -> fileprocessor.UploadFileResp
+	5, // 5: fileprocessor.FileProcessor.IsFileExist:output_type -> fileprocessor.BoolValue
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -302,7 +399,7 @@ func file_fileprocessor_fileprocessor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fileprocessor_fileprocessor_proto_rawDesc), len(file_fileprocessor_fileprocessor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
