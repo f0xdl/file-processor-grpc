@@ -1,12 +1,14 @@
 syntax = "proto3";
 
-option go_package = "github.com/f0xdl/file-processor-grpc/gen/go/fileprocessor";
+option go_package = "github.com/f0xdl/file-processor-grpc/api/fileprocessor";
 package fileprocessor;
 
 
-
-service FileService {
-  rpc ProcessFiles (FileList) returns (stream FileStats);
+service FileProcessor {
+  rpc GetFileStats (FileList) returns (stream FileStats);
+  rpc UploadFile(UploadFileReq) returns (UploadFileResp);
+  rpc IsFileExist (CheckFileExistsReq) returns (BoolValue);
+  
 }
 
 message FileList {
@@ -17,5 +19,23 @@ message FileStats {
   string path = 1;
   int32 lines = 2;
   int32 words = 3;
-  string error = 4; // если ошибка при обработке
+  string err = 4; // if error during processing
+}
+
+message UploadFileReq {
+  string filename = 1;
+  bytes content = 2;
+}
+
+message UploadFileResp {
+  bool success = 1;
+  string message = 2;
+}
+
+message CheckFileExistsReq{
+  string filename = 1;
+}
+
+message BoolValue {
+  bool value = 1;
 }

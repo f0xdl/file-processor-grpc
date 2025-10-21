@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/f0xdl/file-processor-grpc/internal/client"
+	"github.com/f0xdl/file-processor-grpc/internal/fileservice"
 	"github.com/f0xdl/file-processor-grpc/pkg/logger"
 	"github.com/f0xdl/file-processor-grpc/pkg/safe_service"
 	"github.com/rs/zerolog/log"
@@ -17,7 +17,7 @@ import (
 
 func main() {
 	//TODO: ADD FLAG FOR PRINT VERSION
-	debug := flag.Bool("debug", true, "enable debug mode")
+	debug := flag.Bool("debug", false, "enable debug mode")
 	flag.Parse()
 
 	if err := logger.SetupDefaultLogger(*debug); err != nil {
@@ -27,8 +27,8 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	app := client.NewApp()
+	app := fileservice.NewApp()
 	if err := safe_service.SafeStart(ctx, logger.NewLogAdapter(), app, time.Second*15); err != nil {
-		log.Fatal().Err(err).Msg("Error in client service")
+		log.Fatal().Err(err).Msg("Error in file service")
 	}
 }

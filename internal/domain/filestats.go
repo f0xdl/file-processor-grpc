@@ -1,6 +1,51 @@
 package domain
 
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"github.com/rs/zerolog/log"
+	"os"
+)
+
 type FileStats struct {
-	Lines int
-	Words int
+	Path  string `json:"path"`
+	Lines int    `json:"lines"`
+	Words int    `json:"words"`
+	Err   error  `json:"err"`
+}
+
+func (fs FileStats) MarshalJSON() ([]byte, error) {
+	type FStats FileStats
+	var errStr string
+	if fs.Err != nil {
+		errStr = fs.Err.Error()
+	}
+	return json.Marshal(&struct {
+		*FStats
+		Err string `json:"err,omitempty"`
+	}{
+		Err:    errStr,
+		FStats: (*FStats)(&fs),
+	})
+}
+
+func (fs FileStats) Error() string {
+	switch {
+	case fs.Err == nil:
+		return ""
+	case errors.Is(fs.Err, os.ErrNotExist):
+		return "not found"
+	case errors.Is(fs.Err, os.ErrPermission):
+		return "access denied"
+	case errors.Is(fs.Err, context.DeadlineExceeded) || errors.Is(fs.Err, context.Canceled):
+		return "timeout"
+	default:
+		log.Error().Err(fs.Err).Str("path", fs.Path).Msg("unknown error when  opening the file")
+		return "unknown error"
+	}
+}
+
+func FileStatsError(path string, err error) FileStats {
+	return FileStats{Path: path, Err: err}
 }

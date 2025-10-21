@@ -1,0 +1,21 @@
+volumes:
+  storage:
+services:
+  backend:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: deploy/file-service.Dockerfile
+    volumes:
+      - storage:/storage
+  frontend:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: deploy/client.Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+    environment:
+      - GRPC_SERVER_ADDRESS=backend:50051
