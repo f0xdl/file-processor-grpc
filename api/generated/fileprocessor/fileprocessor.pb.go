@@ -247,11 +247,11 @@ const file_fileprocessor_fileprocessor_proto_rawDesc = "" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x14\n" +
 	"\x05lines\x18\x02 \x01(\x05R\x05lines\x12\x14\n" +
 	"\x05words\x18\x03 \x01(\x05R\x05words\x12\x10\n" +
-	"\x03err\x18\x04 \x01(\tR\x03err2\xe6\x01\n" +
+	"\x03err\x18\x04 \x01(\tR\x03err2\xe8\x01\n" +
 	"\rFileProcessor\x12C\n" +
-	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12B\n" +
+	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12D\n" +
 	"\n" +
-	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x16.google.protobuf.Empty\x12L\n" +
+	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x16.google.protobuf.Empty(\x01\x12L\n" +
 	"\vIsFileExist\x12!.fileprocessor.CheckFileExistsReq\x1a\x1a.google.protobuf.BoolValueB8Z6github.com/f0xdl/file-processor-grpc/api/fileprocessorb\x06proto3"
 
 var (

@@ -1,11 +1,13 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
+	"io"
 	"sync"
 
 	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
@@ -124,23 +126,38 @@ func (p *FileProcessorUC) IsFileExist(ctx context.Context, r *pb.CheckFileExists
 	}, nil
 }
 
-func (p *FileProcessorUC) UploadFile(ctx context.Context, r *pb.UploadFileReq) (*emptypb.Empty, error) {
-	if len(r.Filename) == 0 {
-		return nil, domain.FileStatsError(r.Filename, domain.ErrWrongFileName)
-	}
-	if !p.store.StoreExist() {
-		return nil, domain.FileStatsError(r.Filename, domain.StoreAccessErr)
-	}
-	if p.store.FileExist(ctx, r.Filename) {
-		return nil, domain.FileStatsError(r.Filename, domain.FileAlreadyExistErr)
-	}
-	err := p.store.SaveFile(ctx, r.Filename, r.Content)
-	if err != nil {
-		return nil, domain.FileStatsError(r.Filename, fmt.Errorf("SaveFile: %w", err))
-	}
-	return nil, nil
-}
+func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.UploadFileReq, emptypb.Empty]) error {
+	ctx, cancel := context.WithCancel(stream.Context())
+	defer cancel()
 
-//rpc GetFileStats (FileList) returns (stream FileStats);
-//rpc UploadFile(UploadFileReq) returns (BoolValue);
-//rpc IsFileExist (CheckFileExistsReq) returns (BoolValue);
+	buf := bytes.NewBuffer([]byte{})
+	var filename string
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		if filename == "" {
+			filename = req.Filename
+			if len(filename) == 0 {
+				return domain.FileStatsError(req.Filename, domain.ErrWrongFileName)
+			}
+		}
+		buf.Write(req.Content)
+	}
+
+	if !p.store.StoreExist() {
+		return domain.FileStatsError(filename, domain.StoreAccessErr)
+	}
+	if p.store.FileExist(ctx, filename) {
+		return domain.FileStatsError(filename, domain.FileAlreadyExistErr)
+	}
+	err := p.store.SaveFile(ctx, filename, buf.Bytes())
+	if err != nil {
+		return domain.FileStatsError(filename, fmt.Errorf("SaveFile: %w", err))
+	}
+	return nil
+}

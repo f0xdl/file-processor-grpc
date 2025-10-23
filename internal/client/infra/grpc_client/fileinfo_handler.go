@@ -56,13 +56,26 @@ func (h *Handler) UploadFile(ctx context.Context, name string, data []byte) erro
 	defer cancel()
 	req := &pb.UploadFileReq{
 		Filename: name,
-		Content:  data,
 	}
-	_, err := h.fileClient.UploadFile(uploadCtx, req)
+
+	stream, err := h.fileClient.UploadFile(uploadCtx)
 	if err != nil {
 		return gErr(err)
 	}
-	return nil
+
+	k := 1000
+	for i := 0; i < len(data); i += k {
+		if len(data) < i+k {
+			k = len(data) - i
+		}
+		req.Content = data[i : i+k]
+		err = stream.Send(req)
+		if err != nil {
+			return gErr(err)
+		}
+	}
+	_, err = stream.CloseAndRecv()
+	return gErr(err)
 }
 
 func gErr(err error) error {

@@ -6,9 +6,9 @@ import (
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
 )
 
-const MaxFileSize = 1024 * 1024 * 4 // Max 4MB //TODO: migrate to stream send
+const MaxFileSize = 1024 * 1024 * 1024
 
-var MaxFileErr = errors.New("maximum file size is 100MB")
+var MaxFileErr = errors.New("maximum file size is 1GB")
 
 type IHandler interface {
 	GetFileInfo(ctx context.Context, names []string) ([]domain.FileStats, error)

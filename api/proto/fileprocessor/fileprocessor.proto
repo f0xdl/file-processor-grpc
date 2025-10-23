@@ -7,7 +7,7 @@ import "google/protobuf/wrappers.proto";
 
 service FileProcessor {
   rpc GetFileStats (FileList) returns (stream FileStats);
-  rpc UploadFile(UploadFileReq) returns(google.protobuf.Empty);
+  rpc UploadFile(stream UploadFileReq) returns(google.protobuf.Empty);
   rpc IsFileExist (CheckFileExistsReq) returns (google.protobuf.BoolValue);
   
 }
