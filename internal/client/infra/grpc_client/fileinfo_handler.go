@@ -13,7 +13,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const GetTimeout = time.Minute
+const (
+	GetTimeout    = time.Minute
+	UploadTimeout = 5 * time.Minute
+)
 
 type Handler struct {
 	fileClient pb.FileProcessorClient
@@ -46,6 +49,20 @@ func (h *Handler) GetFileInfo(ctx context.Context, names []string) ([]domain.Fil
 		results = append(results, fileStatsPbToD(fileStats))
 	}
 	return results, nil
+}
+
+func (h *Handler) UploadFile(ctx context.Context, name string, data []byte) error {
+	uploadCtx, cancel := context.WithTimeout(ctx, UploadTimeout)
+	defer cancel()
+	req := &pb.UploadFileReq{
+		Filename: name,
+		Content:  data,
+	}
+	_, err := h.fileClient.UploadFile(uploadCtx, req)
+	if err != nil {
+		return gErr(err)
+	}
+	return nil
 }
 
 func gErr(err error) error {

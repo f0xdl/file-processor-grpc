@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
+	"github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -64,4 +65,26 @@ func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.
 		s.Err = err
 	}
 	return
+}
+
+func (i *IoFileProcessor) SaveFile(ctx context.Context, filename string, content []byte) error {
+	err := make(chan error)
+	go func() {
+		fullPath := filepath.Join(i.basePath, filename)
+		log.Warn().Msg("fullPath:" + fullPath)
+		err <- os.WriteFile(fullPath, content, 0644)
+	}()
+
+	select {
+	case result := <-err:
+		return result
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
+func (i *IoFileProcessor) StoreExist() bool {
+	_, err := os.Stat(i.basePath)
+	log.Warn().Str("path", i.basePath).Msg("store path")
+	return err == nil
 }

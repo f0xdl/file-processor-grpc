@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"errors"
-	"io"
 	"net/http"
 
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
@@ -15,7 +14,7 @@ import (
 
 type IFileService interface {
 	GetFileInfo(ctx context.Context, names []string) ([]domain.FileStats, error)
-	UploadFile(ctx context.Context, name string, r io.Reader) error
+	UploadFile(ctx context.Context, name string, data []byte) error
 }
 
 type Server struct {

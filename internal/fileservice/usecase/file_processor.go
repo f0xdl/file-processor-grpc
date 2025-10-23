@@ -3,6 +3,9 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"sync"
 
 	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
@@ -16,6 +19,8 @@ const MaxJobs = 5
 type IFileProcessor interface {
 	FileExist(ctx context.Context, path string) bool
 	GetStats(ctx context.Context, path string) *domain.FileStats
+	SaveFile(ctx context.Context, filename string, content []byte) error
+	StoreExist() bool
 }
 type ICache interface {
 	Get(ctx context.Context, path string) (*domain.FileStats, error)
@@ -109,3 +114,33 @@ func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreaming
 	}
 	return nil
 }
+
+func (p *FileProcessorUC) IsFileExist(ctx context.Context, r *pb.CheckFileExistsReq) (*wrapperspb.BoolValue, error) {
+	if len(r.Filename) == 0 {
+		return nil, domain.FileStatsError(r.Filename, domain.ErrWrongFileName)
+	}
+	return &wrapperspb.BoolValue{
+		Value: p.store.FileExist(ctx, r.Filename),
+	}, nil
+}
+
+func (p *FileProcessorUC) UploadFile(ctx context.Context, r *pb.UploadFileReq) (*emptypb.Empty, error) {
+	if len(r.Filename) == 0 {
+		return nil, domain.FileStatsError(r.Filename, domain.ErrWrongFileName)
+	}
+	if !p.store.StoreExist() {
+		return nil, domain.FileStatsError(r.Filename, domain.StoreAccessErr)
+	}
+	if p.store.FileExist(ctx, r.Filename) {
+		return nil, domain.FileStatsError(r.Filename, domain.FileAlreadyExistErr)
+	}
+	err := p.store.SaveFile(ctx, r.Filename, r.Content)
+	if err != nil {
+		return nil, domain.FileStatsError(r.Filename, fmt.Errorf("SaveFile: %w", err))
+	}
+	return nil, nil
+}
+
+//rpc GetFileStats (FileList) returns (stream FileStats);
+//rpc UploadFile(UploadFileReq) returns (BoolValue);
+//rpc IsFileExist (CheckFileExistsReq) returns (BoolValue);

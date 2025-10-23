@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -69,7 +70,13 @@ func (s *Server) uploadHandler(c *gin.Context) {
 	}
 	defer file.Close()
 
-	err = s.uc.UploadFile(ctx, fileHeader.Filename, file)
+	data, err := io.ReadAll(file)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to read file")
+		c.String(http.StatusInternalServerError, "Failed to read file")
+	}
+
+	err = s.uc.UploadFile(ctx, fileHeader.Filename, data)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to upload file")
 		c.String(http.StatusInternalServerError, "Failed to upload file")

@@ -13,6 +13,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var BuildErr = errors.New("grpc stub or http server is nil")
+
 //go:generate envdoc --output ./../../docs/client-env.md
 type Config struct {
 	// Address to gRPC file service, [host]:port
@@ -65,6 +67,9 @@ func (a *App) Build() (err error) {
 }
 
 func (a *App) Run(_ context.Context) (err error) {
+	if a.grpcStub == nil || a.httpServer == nil {
+		return BuildErr
+	}
 	log.Info().Str("addr", a.grpcStub.Target()).Msg("gRPC server listening")
 	if a.grpcStub == nil {
 		return errors.New("grpc client nil")
