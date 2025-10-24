@@ -40,6 +40,7 @@ RUN addgroup -S appuser \
  && adduser -S -G appuser -H -s /sbin/nologin appuser
 
 COPY --from=build --chown=appuser:appuser /app/build/bin/file-service /app 
+RUN mkdir -p /storage && chown -R appuser:appuser /storage
 
 USER appuser
 ENV GRPC_ADDRESS=":50051" \

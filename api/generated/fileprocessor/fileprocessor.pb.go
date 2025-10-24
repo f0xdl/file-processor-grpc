@@ -9,7 +9,6 @@ package fileprocessor
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
@@ -119,6 +118,50 @@ func (x *UploadFileReq) GetContent() []byte {
 	return nil
 }
 
+type UploadFileRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Hash          string                 `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadFileRes) Reset() {
+	*x = UploadFileRes{}
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadFileRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadFileRes) ProtoMessage() {}
+
+func (x *UploadFileRes) ProtoReflect() protoreflect.Message {
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadFileRes.ProtoReflect.Descriptor instead.
+func (*UploadFileRes) Descriptor() ([]byte, []int) {
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UploadFileRes) GetHash() string {
+	if x != nil {
+		return x.Hash
+	}
+	return ""
+}
+
 type CheckFileExistsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Filename      string                 `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
@@ -128,7 +171,7 @@ type CheckFileExistsReq struct {
 
 func (x *CheckFileExistsReq) Reset() {
 	*x = CheckFileExistsReq{}
-	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +183,7 @@ func (x *CheckFileExistsReq) String() string {
 func (*CheckFileExistsReq) ProtoMessage() {}
 
 func (x *CheckFileExistsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[2]
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +196,7 @@ func (x *CheckFileExistsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckFileExistsReq.ProtoReflect.Descriptor instead.
 func (*CheckFileExistsReq) Descriptor() ([]byte, []int) {
-	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{2}
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CheckFileExistsReq) GetFilename() string {
@@ -175,7 +218,7 @@ type FileStats struct {
 
 func (x *FileStats) Reset() {
 	*x = FileStats{}
-	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +230,7 @@ func (x *FileStats) String() string {
 func (*FileStats) ProtoMessage() {}
 
 func (x *FileStats) ProtoReflect() protoreflect.Message {
-	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[3]
+	mi := &file_fileprocessor_fileprocessor_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +243,7 @@ func (x *FileStats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileStats.ProtoReflect.Descriptor instead.
 func (*FileStats) Descriptor() ([]byte, []int) {
-	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{3}
+	return file_fileprocessor_fileprocessor_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FileStats) GetPath() string {
@@ -235,23 +278,25 @@ var File_fileprocessor_fileprocessor_proto protoreflect.FileDescriptor
 
 const file_fileprocessor_fileprocessor_proto_rawDesc = "" +
 	"\n" +
-	"!fileprocessor/fileprocessor.proto\x12\rfileprocessor\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\" \n" +
+	"!fileprocessor/fileprocessor.proto\x12\rfileprocessor\x1a\x1egoogle/protobuf/wrappers.proto\" \n" +
 	"\bFileList\x12\x14\n" +
 	"\x05paths\x18\x01 \x03(\tR\x05paths\"E\n" +
 	"\rUploadFileReq\x12\x1a\n" +
 	"\bfilename\x18\x01 \x01(\tR\bfilename\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\fR\acontent\"0\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent\"#\n" +
+	"\rUploadFileRes\x12\x12\n" +
+	"\x04hash\x18\x02 \x01(\tR\x04hash\"0\n" +
 	"\x12CheckFileExistsReq\x12\x1a\n" +
 	"\bfilename\x18\x01 \x01(\tR\bfilename\"]\n" +
 	"\tFileStats\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x14\n" +
 	"\x05lines\x18\x02 \x01(\x05R\x05lines\x12\x14\n" +
 	"\x05words\x18\x03 \x01(\x05R\x05words\x12\x10\n" +
-	"\x03err\x18\x04 \x01(\tR\x03err2\xe8\x01\n" +
+	"\x03err\x18\x04 \x01(\tR\x03err2\xee\x01\n" +
 	"\rFileProcessor\x12C\n" +
-	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12D\n" +
+	"\fGetFileStats\x12\x17.fileprocessor.FileList\x1a\x18.fileprocessor.FileStats0\x01\x12J\n" +
 	"\n" +
-	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x16.google.protobuf.Empty(\x01\x12L\n" +
+	"UploadFile\x12\x1c.fileprocessor.UploadFileReq\x1a\x1c.fileprocessor.UploadFileRes(\x01\x12L\n" +
 	"\vIsFileExist\x12!.fileprocessor.CheckFileExistsReq\x1a\x1a.google.protobuf.BoolValueB8Z6github.com/f0xdl/file-processor-grpc/api/fileprocessorb\x06proto3"
 
 var (
@@ -266,21 +311,21 @@ func file_fileprocessor_fileprocessor_proto_rawDescGZIP() []byte {
 	return file_fileprocessor_fileprocessor_proto_rawDescData
 }
 
-var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_fileprocessor_fileprocessor_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_fileprocessor_fileprocessor_proto_goTypes = []any{
 	(*FileList)(nil),             // 0: fileprocessor.FileList
 	(*UploadFileReq)(nil),        // 1: fileprocessor.UploadFileReq
-	(*CheckFileExistsReq)(nil),   // 2: fileprocessor.CheckFileExistsReq
-	(*FileStats)(nil),            // 3: fileprocessor.FileStats
-	(*emptypb.Empty)(nil),        // 4: google.protobuf.Empty
+	(*UploadFileRes)(nil),        // 2: fileprocessor.UploadFileRes
+	(*CheckFileExistsReq)(nil),   // 3: fileprocessor.CheckFileExistsReq
+	(*FileStats)(nil),            // 4: fileprocessor.FileStats
 	(*wrapperspb.BoolValue)(nil), // 5: google.protobuf.BoolValue
 }
 var file_fileprocessor_fileprocessor_proto_depIdxs = []int32{
 	0, // 0: fileprocessor.FileProcessor.GetFileStats:input_type -> fileprocessor.FileList
 	1, // 1: fileprocessor.FileProcessor.UploadFile:input_type -> fileprocessor.UploadFileReq
-	2, // 2: fileprocessor.FileProcessor.IsFileExist:input_type -> fileprocessor.CheckFileExistsReq
-	3, // 3: fileprocessor.FileProcessor.GetFileStats:output_type -> fileprocessor.FileStats
-	4, // 4: fileprocessor.FileProcessor.UploadFile:output_type -> google.protobuf.Empty
+	3, // 2: fileprocessor.FileProcessor.IsFileExist:input_type -> fileprocessor.CheckFileExistsReq
+	4, // 3: fileprocessor.FileProcessor.GetFileStats:output_type -> fileprocessor.FileStats
+	2, // 4: fileprocessor.FileProcessor.UploadFile:output_type -> fileprocessor.UploadFileRes
 	5, // 5: fileprocessor.FileProcessor.IsFileExist:output_type -> google.protobuf.BoolValue
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
@@ -300,7 +345,7 @@ func file_fileprocessor_fileprocessor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fileprocessor_fileprocessor_proto_rawDesc), len(file_fileprocessor_fileprocessor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

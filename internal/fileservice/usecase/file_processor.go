@@ -5,9 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"io"
 	"sync"
 
 	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
@@ -23,6 +21,7 @@ type IFileProcessor interface {
 	GetStats(ctx context.Context, path string) *domain.FileStats
 	SaveFile(ctx context.Context, filename string, content []byte) error
 	StoreExist() bool
+	CalcHash(filename string) ([]byte, error)
 }
 type ICache interface {
 	Get(ctx context.Context, path string) (*domain.FileStats, error)
@@ -126,7 +125,7 @@ func (p *FileProcessorUC) IsFileExist(ctx context.Context, r *pb.CheckFileExists
 	}, nil
 }
 
-func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.UploadFileReq, emptypb.Empty]) error {
+func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.UploadFileReq, pb.UploadFileRes]) error {
 	ctx, cancel := context.WithCancel(stream.Context())
 	defer cancel()
 
@@ -134,11 +133,14 @@ func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.Upload
 	var filename string
 	for {
 		req, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
 		if err != nil {
 			return err
+		}
+		if req == nil {
+			return errors.New("nil input")
+		}
+		if len(req.Content) == 0 { //stream finished
+			break
 		}
 		if filename == "" {
 			filename = req.Filename
@@ -159,5 +161,9 @@ func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.Upload
 	if err != nil {
 		return domain.FileStatsError(filename, fmt.Errorf("SaveFile: %w", err))
 	}
-	return nil
+	hash, err := p.store.CalcHash(filename)
+	if err != nil {
+		return domain.FileStatsError(filename, fmt.Errorf("CaclHash: %w", err))
+	}
+	return stream.SendAndClose(&pb.UploadFileRes{Hash: fmt.Sprintf("%x", hash)})
 }

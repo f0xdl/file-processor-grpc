@@ -3,8 +3,10 @@ package file
 import (
 	"bufio"
 	"context"
+	"crypto/md5"
+	"fmt"
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
-	"github.com/rs/zerolog/log"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -70,9 +72,7 @@ func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.
 func (i *IoFileProcessor) SaveFile(ctx context.Context, filename string, content []byte) error {
 	err := make(chan error)
 	go func() {
-		fullPath := filepath.Join(i.basePath, filename)
-		log.Warn().Msg("fullPath:" + fullPath)
-		err <- os.WriteFile(fullPath, content, 0644)
+		err <- os.WriteFile(filepath.Join(i.basePath, filename), content, 0644)
 	}()
 
 	select {
@@ -85,6 +85,18 @@ func (i *IoFileProcessor) SaveFile(ctx context.Context, filename string, content
 
 func (i *IoFileProcessor) StoreExist() bool {
 	_, err := os.Stat(i.basePath)
-	log.Warn().Str("path", i.basePath).Msg("store path")
 	return err == nil
+}
+
+func (i *IoFileProcessor) CalcHash(filename string) ([]byte, error) {
+	file, err := os.Open(filepath.Join(i.basePath, filename))
+	if err != nil {
+		return []byte{}, fmt.Errorf("calc hash: %w", err)
+	}
+	defer file.Close()
+	hash := md5.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return []byte{}, fmt.Errorf("calc hash: %w", err)
+	}
+	return hash.Sum(nil), nil
 }

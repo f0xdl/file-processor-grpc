@@ -2,12 +2,12 @@ syntax = "proto3";
 
 option go_package = "github.com/f0xdl/file-processor-grpc/api/fileprocessor";
 package fileprocessor;
-import "google/protobuf/empty.proto";
+//import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 service FileProcessor {
   rpc GetFileStats (FileList) returns (stream FileStats);
-  rpc UploadFile(stream UploadFileReq) returns(google.protobuf.Empty);
+  rpc UploadFile(stream UploadFileReq) returns(UploadFileRes);
   rpc IsFileExist (CheckFileExistsReq) returns (google.protobuf.BoolValue);
   
 }
@@ -19,6 +19,9 @@ message FileList {
 message UploadFileReq {
   string filename = 1;
   bytes content = 2;
+}
+message UploadFileRes {
+  string hash = 2;
 }
 
 message CheckFileExistsReq{
