@@ -13,6 +13,10 @@ RUN go install \
     -ldflags "-s -w -extldflags '-static'" \
     github.com/go-delve/delve/cmd/dlv@latest
 
+RUN GRPC_HEALTH_PROBE_VERSION=v0.4.38 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-${GOOS}-${GOARCH} && \
+    chmod +x /bin/grpc_health_probe
+
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
@@ -40,6 +44,7 @@ RUN addgroup -S appuser \
  && adduser -S -G appuser -H -s /sbin/nologin appuser
 
 COPY --from=build --chown=appuser:appuser /app/build/bin/file-service /app 
+COPY --from=build --chown=appuser:appuser /bin/grpc_health_probe /bin/grpc_health_probe
 RUN mkdir -p /storage && chown -R appuser:appuser /storage
 
 USER appuser
