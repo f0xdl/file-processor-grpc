@@ -68,7 +68,9 @@ func (s *Server) uploadHandler(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "Failed to open file")
 		return
 	}
-	defer file.Close()
+	defer func(f func() error) {
+		_ = f()
+	}(file.Close)
 
 	data, err := io.ReadAll(file)
 	if err != nil {

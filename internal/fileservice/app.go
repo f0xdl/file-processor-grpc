@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var BuildErr = errors.New("grpc stub or http server is nil")
+var ErrBuild = errors.New("grpc stub or http server is nil")
 
 //go:generate envdoc --output ./../../docs/fileservice-env.md
 type Config struct {
@@ -80,7 +80,7 @@ func (a *App) Build() (err error) {
 func (a *App) Run(_ context.Context) (err error) {
 	log.Info().Msg("Run gRPC via tcp listener")
 	if a.gServer == nil || a.healthServer == nil {
-		return BuildErr
+		return ErrBuild
 	}
 	listener, err := net.Listen("tcp", a.cfg.GrpcAddr)
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 
 const MaxFileSize = 1024 * 1024 * 1024
 
-var MaxFileErr = errors.New("maximum file size is 1GB")
+var ErrMaxFile = errors.New("maximum file size is 1GB")
 
 type IHandler interface {
 	GetFileInfo(ctx context.Context, names []string) ([]domain.FileStats, error)
@@ -25,7 +25,7 @@ func NewFileService(handler IHandler) *FileService {
 
 func (uc *FileService) UploadFile(ctx context.Context, name string, data []byte) error {
 	if len(data) > MaxFileSize {
-		return MaxFileErr
+		return ErrMaxFile
 	}
 	return uc.handler.UploadFile(ctx, name, data)
 }

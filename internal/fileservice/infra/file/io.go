@@ -30,10 +30,7 @@ func NewIoFileReader(basePath string) *IoFileProcessor {
 func (i *IoFileProcessor) FileExist(_ context.Context, path string) bool {
 	path = filepath.Join(i.basePath, path)
 	_, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.FileStats) {
@@ -47,7 +44,11 @@ func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.
 		s.Err = err
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if s.Err = file.Close(); s.Err != nil {
+			return
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -88,15 +89,21 @@ func (i *IoFileProcessor) StoreExist() bool {
 	return err == nil
 }
 
-func (i *IoFileProcessor) CalcHash(filename string) ([]byte, error) {
+func (i *IoFileProcessor) CalcHash(filename string) (b []byte, e error) {
 	file, err := os.Open(filepath.Join(i.basePath, filename))
 	if err != nil {
-		return []byte{}, fmt.Errorf("calc hash: %w", err)
+		e = fmt.Errorf("calc hash: %w", err)
+		return
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
+
 	hash := md5.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return []byte{}, fmt.Errorf("calc hash: %w", err)
+	if _, err = io.Copy(hash, file); err != nil {
+		e = fmt.Errorf("calc hash: %w", err)
+		return
 	}
-	return hash.Sum(nil), nil
+	b = hash.Sum(nil)
+	return
 }

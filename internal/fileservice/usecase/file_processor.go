@@ -152,10 +152,10 @@ func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.Upload
 	}
 
 	if !p.store.StoreExist() {
-		return domain.FileStatsError(filename, domain.StoreAccessErr)
+		return domain.FileStatsError(filename, domain.ErrStoreAccess)
 	}
 	if p.store.FileExist(ctx, filename) {
-		return domain.FileStatsError(filename, domain.FileAlreadyExistErr)
+		return domain.FileStatsError(filename, domain.ErrFileAlreadyExist)
 	}
 	err := p.store.SaveFile(ctx, filename, buf.Bytes())
 	if err != nil {
