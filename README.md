@@ -6,18 +6,29 @@
 ![zerolog](https://img.shields.io/badge/zerolog-f33?style=flat-square)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white)
 
->[!tldr] Abstract
-> The project was written for educational purposes.
-> Windows platform, vscode editor. Support for other operating systems is not guaranteed.
-
 # 📦FileProcessor gRPC `🛠 Practice`
-## 📚Table of contents
-🚧🚧🚧
 
-## 🎯 Goals
+> [!note]
+> The project was written for educational purposes.
+> 🚧🚧🚧
+
+## 📚Table of contents
+- Features
+- Todo
+
+## 🛠️ Features
++ 🔗 Accepts a list of virtual file names
++ ⚙️ Processes files in parallel (counting lines and words)
++ 🔄 Streams results back to the client
++ ⏹️ Support context cancellation
++ 🕓 Stores processing history
++ 📤 Supports file uploads
+- 🧩 Using middleware (rate-limit and logger)
+- 🛡️ Authorization via gRPC metadata
+
+##  📋 TODO
 The project is focused on practicing with gRPC in Golang:
-### 📋 TODO
-- [ ] Client:
+### Http Client
   - [x] Accepts a list of file paths via HTTP API
   - [x] Send paths to gRPC server
   - [ ] Supports file uploads to gRPC
@@ -43,10 +54,10 @@ The project is focused on practicing with gRPC in Golang:
   - [x] Stream results back to the client
   - [x] Support context cancellation on request
   - [x] Stores processing history
-  - [ ] Supports file uploads to store
-- [ ] Lifecycle organization:
+  - [x] Supports file uploads to store
+- [x] Lifecycle organization:
   -  [x] Graceful shutdown
-  -  [ ] Healthcheck
+  -  [x] Healthcheck
 - [ ] Testing
   - [ ] Unit testing:
     - [ ] Counting lines
@@ -56,22 +67,11 @@ The project is focused on practicing with gRPC in Golang:
     - [ ] Client: send path -> Server: calculate -> Client: return result
 - [ ] Deployment
   - [x] Create dockerfiles
-  - [ ] Create docker-compose
+  - [x] Create docker-compose
   - [ ] Write ReadMe
   - [x] Add Taskfile.yml in project
 
-- ⏳ Backlog
-  - Authorization via gRPC metadata
 
-## 🛠️ Features
-- 🔗 Accepts a list of file paths (or virtual file names)
-- ⚙️ Processes files in parallel (counting lines and words)
-- 🔄 Streams results back to the client
-- 🧩 Using middleware (interceptor, rate-limit, etc.)
-- ⏹️ Support context cancellation
-- 🛡️ Authorization via gRPC metadata
-- 🕓 Stores processing history
-- 📤 Supports file uploads
 
 ## 📐 Architecture
 🚧🚧🚧
