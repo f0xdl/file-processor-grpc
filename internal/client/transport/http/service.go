@@ -27,8 +27,9 @@ func NewHttpServer(host string, uc IFileService) *Server {
 	s := &Server{errCh: make(chan error), uc: uc}
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
+	r.Use(RateLimiter())
+	r.Use(ZeroLogger())
 	r.Use(RecoveryWithZerolog(&log.Logger))
-	// r.Use(gin.Logger())
 
 	r.GET("/status", healthHandler)
 	r.GET("/file/info", s.fileinfoHandler)
