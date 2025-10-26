@@ -1,8 +1,11 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"sync"
 
 	pb "github.com/f0xdl/file-processor-grpc/api/generated/fileprocessor"
@@ -16,6 +19,9 @@ const MaxJobs = 5
 type IFileProcessor interface {
 	FileExist(ctx context.Context, path string) bool
 	GetStats(ctx context.Context, path string) *domain.FileStats
+	SaveFile(ctx context.Context, filename string, content []byte) error
+	StoreExist() bool
+	CalcHash(filename string) ([]byte, error)
 }
 type ICache interface {
 	Get(ctx context.Context, path string) (*domain.FileStats, error)
@@ -108,4 +114,56 @@ func (p *FileProcessorUC) GetFileStats(list *pb.FileList, g grpc.ServerStreaming
 		}
 	}
 	return nil
+}
+
+func (p *FileProcessorUC) IsFileExist(ctx context.Context, r *pb.CheckFileExistsReq) (*wrapperspb.BoolValue, error) {
+	if len(r.Filename) == 0 {
+		return nil, domain.FileStatsError(r.Filename, domain.ErrWrongFileName)
+	}
+	return &wrapperspb.BoolValue{
+		Value: p.store.FileExist(ctx, r.Filename),
+	}, nil
+}
+
+func (p *FileProcessorUC) UploadFile(stream grpc.ClientStreamingServer[pb.UploadFileReq, pb.UploadFileRes]) error {
+	ctx, cancel := context.WithCancel(stream.Context())
+	defer cancel()
+
+	buf := bytes.NewBuffer([]byte{})
+	var filename string
+	for {
+		req, err := stream.Recv()
+		if err != nil {
+			return err
+		}
+		if req == nil {
+			return errors.New("nil input")
+		}
+		if len(req.Content) == 0 { //stream finished
+			break
+		}
+		if filename == "" {
+			filename = req.Filename
+			if len(filename) == 0 {
+				return domain.FileStatsError(req.Filename, domain.ErrWrongFileName)
+			}
+		}
+		buf.Write(req.Content)
+	}
+
+	if !p.store.StoreExist() {
+		return domain.FileStatsError(filename, domain.ErrStoreAccess)
+	}
+	if p.store.FileExist(ctx, filename) {
+		return domain.FileStatsError(filename, domain.ErrFileAlreadyExist)
+	}
+	err := p.store.SaveFile(ctx, filename, buf.Bytes())
+	if err != nil {
+		return domain.FileStatsError(filename, fmt.Errorf("SaveFile: %w", err))
+	}
+	hash, err := p.store.CalcHash(filename)
+	if err != nil {
+		return domain.FileStatsError(filename, fmt.Errorf("CaclHash: %w", err))
+	}
+	return stream.SendAndClose(&pb.UploadFileRes{Hash: fmt.Sprintf("%x", hash)})
 }

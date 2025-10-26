@@ -3,7 +3,10 @@ package file
 import (
 	"bufio"
 	"context"
+	"crypto/md5"
+	"fmt"
 	"github.com/f0xdl/file-processor-grpc/internal/domain"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,10 +30,7 @@ func NewIoFileReader(basePath string) *IoFileProcessor {
 func (i *IoFileProcessor) FileExist(_ context.Context, path string) bool {
 	path = filepath.Join(i.basePath, path)
 	_, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.FileStats) {
@@ -44,7 +44,11 @@ func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.
 		s.Err = err
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if s.Err = file.Close(); s.Err != nil {
+			return
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -63,5 +67,43 @@ func (i *IoFileProcessor) GetStats(ctx context.Context, path string) (s *domain.
 	if err = scanner.Err(); err != nil {
 		s.Err = err
 	}
+	return
+}
+
+func (i *IoFileProcessor) SaveFile(ctx context.Context, filename string, content []byte) error {
+	err := make(chan error)
+	go func() {
+		err <- os.WriteFile(filepath.Join(i.basePath, filename), content, 0644)
+	}()
+
+	select {
+	case result := <-err:
+		return result
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
+func (i *IoFileProcessor) StoreExist() bool {
+	_, err := os.Stat(i.basePath)
+	return err == nil
+}
+
+func (i *IoFileProcessor) CalcHash(filename string) (b []byte, e error) {
+	file, err := os.Open(filepath.Join(i.basePath, filename))
+	if err != nil {
+		e = fmt.Errorf("calc hash: %w", err)
+		return
+	}
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
+
+	hash := md5.New()
+	if _, err = io.Copy(hash, file); err != nil {
+		e = fmt.Errorf("calc hash: %w", err)
+		return
+	}
+	b = hash.Sum(nil)
 	return
 }

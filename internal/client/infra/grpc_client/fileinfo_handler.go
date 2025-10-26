@@ -2,6 +2,7 @@ package grpc_client
 
 import (
 	"context"
+	"errors"
 	"io"
 	"time"
 
@@ -13,7 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const GetTimeout = time.Minute
+const (
+	GetTimeout    = time.Minute
+	UploadTimeout = 5 * time.Minute
+)
 
 type Handler struct {
 	fileClient pb.FileProcessorClient
@@ -46,6 +50,51 @@ func (h *Handler) GetFileInfo(ctx context.Context, names []string) ([]domain.Fil
 		results = append(results, fileStatsPbToD(fileStats))
 	}
 	return results, nil
+}
+
+func (h *Handler) UploadFile(ctx context.Context, name string, data []byte) error {
+	if len(data) == 0 {
+		return errors.New("data is empty")
+	}
+
+	uploadCtx, cancel := context.WithTimeout(ctx, UploadTimeout)
+	defer cancel()
+
+	req := &pb.UploadFileReq{
+		Filename: name,
+	}
+
+	stream, err := h.fileClient.UploadFile(uploadCtx)
+	if err != nil {
+		return gErr(err)
+	}
+
+	chunk := 1000
+	for i := 0; i < len(data); i += chunk {
+		if len(data) < i+chunk {
+			chunk = len(data) - i
+		}
+		req.Content = data[i : i+chunk]
+		err = stream.Send(req)
+		if err != nil {
+			return gErr(err)
+		}
+	}
+	//final empty array
+	req.Content = []byte{}
+	err = stream.Send(req)
+	if err != nil {
+		return gErr(err)
+	}
+
+	res, err := stream.CloseAndRecv()
+	if res != nil {
+		log.Warn().Str("res", res.Hash).Str("filename", name).Msg("")
+	}
+	if err != nil {
+		return gErr(err)
+	}
+	return nil
 }
 
 func gErr(err error) error {

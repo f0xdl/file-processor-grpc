@@ -2,6 +2,9 @@ package fileservice
 
 import (
 	"context"
+	"errors"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"net"
 
 	"github.com/caarlos0/env/v11"
@@ -14,6 +17,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+var ErrBuild = errors.New("grpc stub or http server is nil")
+
 //go:generate envdoc --output ./../../docs/fileservice-env.md
 type Config struct {
 	// Storage directory for processing files
@@ -23,10 +28,10 @@ type Config struct {
 }
 
 type App struct {
-	cfg      *Config
-	done     chan struct{}
-	listener net.Listener
-	gServer  *grpc.Server
+	cfg          *Config
+	done         chan struct{}
+	gServer      *grpc.Server
+	healthServer *health.Server
 }
 
 func NewApp() *App {
@@ -57,6 +62,12 @@ func (a *App) Build() (err error) {
 	}
 	a.gServer = grpc.NewServer(opts...)
 
+	// health check
+	a.healthServer = health.NewServer()
+	grpc_health_v1.RegisterHealthServer(a.gServer, a.healthServer)
+	a.healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
+
+	// file processing
 	store := file.NewIoFileReader(a.cfg.StorageDir)
 	cache := historian.NewMemoryCache()
 	fs := usecase.NewFileServiceServer(store, cache)
@@ -68,6 +79,9 @@ func (a *App) Build() (err error) {
 
 func (a *App) Run(_ context.Context) (err error) {
 	log.Info().Msg("Run gRPC via tcp listener")
+	if a.gServer == nil || a.healthServer == nil {
+		return ErrBuild
+	}
 	listener, err := net.Listen("tcp", a.cfg.GrpcAddr)
 	if err != nil {
 		return err
@@ -84,6 +98,7 @@ func (a *App) Run(_ context.Context) (err error) {
 
 func (a *App) Stop() {
 	log.Warn().Msg("Stopping client")
+	a.healthServer.Shutdown()
 	a.gServer.GracefulStop()
 	close(a.done)
 }

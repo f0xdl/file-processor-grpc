@@ -33,3 +33,5 @@ go.work.sum
 /cmd/dev
 
 
+/build/bin/
+git-flow-plus.config

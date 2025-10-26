@@ -1,25 +1,23 @@
 # https://taskfile.dev
 
 version: '3'
-vars:
-  BASE_VERSION: 0.1.0
-  COMMIT: 00000000
-
 tasks:
   install:
     desc: "Install all tools"
     cmds:
       - echo "TODO"
-      
+
   #LAUNCH
   launch:client:
-    cmds: 
+    desc: "Build and start web-client"
+    cmds:
       - go run ./cmd/client/main.go
-    dotenv: ["./deploy/.env.dev"]
+    dotenv: [ "./deploy/.env.dev" ]
   launch:service:
-    cmds: 
+    desc: "Build and start file-service"
+    cmds:
       - go run ./cmd/file-service/main.go
-    dotenv: ["./deploy/.env.dev"]
+    dotenv: [ "./deploy/.env.dev" ]
   launch:all:
     desc: "Build and start file-service & web-client"
     deps:
@@ -30,14 +28,14 @@ tasks:
 
   #FORMAT 
   lint:
+    desc: "Lint the code"
     cmds:
       - golangci-lint run ./... --config=./.golangci.yml
-    desc: "Lint the code"
   clean:
+    desc: "Clean the build artifacts"
     cmds:
       - rm -rf build/bin/
       - rm -rf api/generated/
-    desc: "Clean the build artifacts"
 
   #DEPLOY
   debug:docker:
@@ -50,20 +48,16 @@ tasks:
     dir: deploy
     cmds:
       - docker-compose -p file-processor-grpc-production down
-      - docker-compose -p file-processor-grpc-production up --build -d 
+      - docker-compose -p file-processor-grpc-production up --build -d
   
   #TESTS
   test:
+    desc: "Run tests"
     cmds:
       - go test ./...
-    desc: "Run tests"
 
   # CODE GENERATORS 
-  gen:env:
-    desc: "Generate environment doc from structures"
-    cmds:
-      - go generate ./internal/client/app.go
-      - go generate ./internal/fileservice/app.go
+  #  gen:env:
   gen:proto:
     desc: "Generate go files from  protobuf scheme"
     vars:
