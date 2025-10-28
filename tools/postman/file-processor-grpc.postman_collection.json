@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "2d812523-fea0-4490-8c68-7230df1a2f81",
+		"name": "file-processor-grpc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44278004",
+		"_collection_link": "https://fernando-9886259.postman.co/workspace/Fernando's-Workspace~21571247-9bac-4f48-8d1c-b444c5c7a524/collection/44278004-2d812523-fea0-4490-8c68-7230df1a2f81?action=share&source=collection_link&creator=44278004"
+	},
+	"item": [
+		{
+			"name": "File Info",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/postscript",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filenames\": [\r\n\"100mb-examplefile-com-2.txt\",\r\n\"words_alpha.txt\",\r\n\"250words.txt\",\r\n\"kafka-1\",\r\n\"li-text-ita-1.txt\"\r\n    ]\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/file/info",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"file",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Info words_alpha.txt",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/postscript",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filenames\": [\"words_alpha.txt\" ]\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/file/info",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"file",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "File Upload",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/postscript",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/projects/202512_job-hunt/file-processor-grpc/data/storage/589words.md"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURL}}/file/upload",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"file",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test Panic",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/postscript",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"error\":{\"code\":1445787183521569854}}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/internal/test_recovery",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"internal",
+						"test_recovery"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
