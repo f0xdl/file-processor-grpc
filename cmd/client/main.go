@@ -16,7 +16,6 @@ import (
 )
 
 func main() {
-	//TODO: ADD FLAG FOR PRINT VERSION
 	debug := flag.Bool("debug", true, "enable debug mode")
 	flag.Parse()
 

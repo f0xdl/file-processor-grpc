@@ -44,11 +44,17 @@ tasks:
     cmds:
       - docker-compose -p file-processor-grpc-debug -f docker-compose.debug.yml up --build
   deploy:docker:
-    desc: "Build and deploy services to docker"
-    dir: deploy
-    cmds:
-      - docker-compose -p file-processor-grpc-production down
-      - docker-compose -p file-processor-grpc-production up --build -d
+      desc: "Build and deploy services to docker"
+      dir: deploy
+      cmds:
+          - docker-compose -p file-processor-grpc-production down
+          - docker-compose -p file-processor-grpc-production up --build -d
+  deploy:loki:
+      desc: "Deploy docker logging system"
+      dir: deploy/loki
+      cmds:
+          - docker-compose -p loki down
+          - docker-compose -p loki up --build -d
   
   #TESTS
   test:
