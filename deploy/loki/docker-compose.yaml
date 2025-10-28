@@ -1,0 +1,40 @@
+#https://grafana.com/docs/loki/latest/setup/install/docker/
+# for windows host machine
+networks:
+    loki:
+services:
+    loki:
+        image: grafana/loki:latest
+        ports:
+            - "3100:3100"
+        command: -config.file=/etc/loki/local-config.yaml
+        volumes:
+            - ../data/loki:/loki
+        networks:
+            - loki
+    promtail:
+        image: grafana/promtail:latest
+        volumes:
+            - ./promtail.yaml:/etc/promtail/docker-config.yaml
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - //var/run/docker.sock:/var/run/docker.sock
+        command: -config.file=/etc/promtail/docker-config.yaml
+        networks:
+            - loki
+        environment:
+            - DOCKER_HOST=unix:///var/run/docker.sock
+
+    grafana:
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+            - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+        image: grafana/grafana:latest
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./grafana.yaml:/etc/grafana/provisioning/datasources/loki.yaml
+
+        networks:
+            - loki

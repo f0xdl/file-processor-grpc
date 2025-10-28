@@ -1,27 +1,29 @@
 volumes:
-  storage:
+    storage:
 services:
-  backend:
-    restart: always
-    build:
-      context: ..
-      dockerfile: deploy/file-service.Dockerfile
-    healthcheck:
-      test: ["CMD","/bin/grpc_health_probe", "-addr=:50051"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    volumes:
-      - storage:/storage
-  frontend:
-    restart: on-failure
-    build:
-      context: ..
-      dockerfile: deploy/client.Dockerfile
-    depends_on:
-      - backend
-    ports:
-      - "8080:8080"
-    environment:
-      - GRPC_SERVER_ADDRESS=backend:50051
+    backend:
+        restart: always
+        build:
+            context: ..
+            dockerfile: deploy/file-service.Dockerfile
+        healthcheck:
+            test: ["CMD","/bin/grpc_health_probe", "-addr=:50051"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
+        volumes:
+            - storage:/storage
+        labels: { logging: "promtail" }
+    frontend:
+        restart: on-failure
+        build:
+            context: ..
+            dockerfile: deploy/client.Dockerfile
+        depends_on:
+            - backend
+        ports:
+            - "8080:8080"
+        environment:
+            - GRPC_SERVER_ADDRESS=backend:50051
+        labels: { logging: "promtail" }
