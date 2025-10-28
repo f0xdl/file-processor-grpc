@@ -8,17 +8,23 @@
 # 📦FileProcessor gRPC `🛠 Practice`
 
 > [!note]
-> The project was written for educational purposes.
-> 🚧🚧🚧
+> This project is intended for research purposes only.
+> Its functionality on your device is not guaranteed.
+> The concepts used in this project are not absolute;
+> they were chosen solely for the purpose of testing gRPC stream methods.
+
+> [!note]
+> Данный проект выполнен исключительно в исследовательских целях. 
+> Его работоспособность на вашем устройстве не гарантирована.
+> Концепции использованные в данном проекте не являются абсолютом,
+> они выбраны исключительно их желания  протестировать пакетную передачу gRPC.    
 
 ## 📚Table of contents
 
-- 📐 Architecture
-- 🛠️ Features
-- ♾️ CI/CD
-- 📋 TODO
+🚧🚧🚧
 
-## 📐 Architecture
+## 📝Description
+
 🚧🚧🚧
 
 ## 🛠️ Features
@@ -31,7 +37,13 @@
 + 📤 Supports file uploads
 + 🧩 Using middleware (rate-limit and logger)
 
-## ♾️ CI/CD
+## 🚀Getting Started
+
+### Prerequisites
+
+- Docker
+- go 1.25
+
 ### Environment Variables
 
 - Client
@@ -47,7 +59,10 @@
 task install
 ```
 
-### Deployment via Docker 
+### Launch with Docker
+
+### Deployment via Docker
+
 🚧🚧🚧
 
 ## 📋 TODO
@@ -85,19 +100,23 @@ task install
 - [x] Lifecycle organization:
     -  [x] Graceful shutdown
     -  [x] Healthcheck
-
-# 🚧🚧🚧
-
-- [ ] Testing
-    - [ ] Unit testing:
-        - [ ] Counting lines
-        - [ ] Counting words
-        - [ ] Processing raise a panic
-    - [ ] Integrated testing:
-        - [ ] Client: send path -> Server: calculate -> Client: return result
 - [ ] Deployment
     - [x] Create dockerfiles
     - [x] Create docker-compose
     - [ ] Add install bash in taskfile.yml
     - [ ] Write ReadMe
     - [x] Add Taskfile.yml in project
+
+## 📁 Folder structure
+
+```shell
+cmd/            # Entrypoint
+internal/       
+  client/     
+  domain/   
+  fileservice/
+pkg/
+  logger/
+  safe_service/
+```
+
