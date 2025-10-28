@@ -37,13 +37,7 @@
 + 📤 Supports file uploads
 + 🧩 Using middleware (rate-limit and logger)
 
-## 🚀Getting Started
-
-### Prerequisites
-
-- Docker
-- go 1.25
-
+## ♾️ CI/CD
 ### Environment Variables
 
 - Client
@@ -59,10 +53,7 @@
 task install
 ```
 
-### Launch with Docker
-
-### Deployment via Docker
-
+### Deployment via Docker 
 🚧🚧🚧
 
 ## 📋 TODO
